@@ -1,0 +1,32 @@
+[
+  {
+    "policy_id": "FIN-001",
+    "policy_title": "Expense Reimbursement Policy",
+    "policy_type": "Financial",
+    "policy_version": "1.0",
+    "effective_date": "2024-01-15",
+    "filename": "FIN-001_expense_reimbursement.md",
+    "complexity": "simple",
+    "generated_at": "2025-11-13T13:51:58.273126"
+  },
+  {
+    "policy_id": "IT-001",
+    "policy_title": "Access Control Policy",
+    "policy_type": "IT Security",
+    "policy_version": "1.0",
+    "effective_date": "2024-01-15",
+    "filename": "IT-001_access_control.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:58.273335"
+  },
+  {
+    "policy_id": "HR-001",
+    "policy_title": "Code of Conduct",
+    "policy_type": "HR",
+    "policy_version": "1.0",
+    "effective_date": "2024-01-15",
+    "filename": "HR-001_code_of_conduct.md",
+    "complexity": "simple",
+    "generated_at": "2025-11-13T13:51:58.273337"
+  }
+]

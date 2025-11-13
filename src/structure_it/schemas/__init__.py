@@ -33,6 +33,10 @@ from structure_it.schemas.media import (
     Speaker,
     Timestamp,
 )
+from structure_it.schemas.policy_requirements import (
+    PolicyRequirement,
+    PolicyRequirements,
+)
 
 __all__ = [
     "BaseSchema",
@@ -68,4 +72,7 @@ __all__ = [
     "Segment",
     "Timestamp",
     "Resource",
+    # Policy Requirements
+    "PolicyRequirement",
+    "PolicyRequirements",
 ]

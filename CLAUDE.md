@@ -10,40 +10,55 @@ This is an exploratory research project, not a production library. The architect
 
 ## Current State
 
-**Phase 1: Foundation** (Current)
-- Minimal architecture with direct Gemini API integration
+**Phase 1: Foundation** ✅ COMPLETE
+- Direct Gemini API integration via `google-genai`
+- Base extractor interface and GeminiExtractor implementation
 - Pydantic schemas for structured outputs
-- Exploratory research mindset - try different approaches
+- Multi-domain support (5 schemas implemented)
 
-**Phase 2: Storage** (Near-term)
-- DuckDB integration for structured data storage
-- Hash-based IDs (SHA256) for deterministic identifiers
-- Query and retrieval capabilities
+**Phase 2: Storage** ✅ COMPLETE
+- Flexible storage abstraction with multiple backends
+- JSON file storage (simple, human-readable)
+- DuckDB storage (analytical queries, efficient)
+- SHA256-based deterministic ID generation
+- Full CRUD operations (store, retrieve, query, delete, count)
 
-**Phase 3: Modeling** (Planned)
-- Experiment with multiple modeling approaches:
-  - Dimensional modeling (star schema)
-  - Graph-based models
-  - Hybrid approaches
-  - Other patterns as discovered
-- Compare effectiveness for LLM context management
+**Phase 3: Modeling** 🔄 READY TO START
+- Infrastructure in place for experimentation
+- Ready to extract real data across domains
+- Compare JSON flexibility vs. DuckDB structure
+- Document patterns that emerge from real data
+- Planned experiments:
+  - Extract 5-10 examples per domain
+  - Query and analyze stored data
+  - Identify common vs. domain-specific patterns
+  - Iterate on schema design based on findings
+  - Potentially explore star schema or graph models
 
-**Phase 4: Processors** (Optional)
+**Phase 4: Processors** ⏸️ DEFERRED
 - Optional genai-processors framework integration
-- Complex pipeline compositions if needed
-- Not required for core functionality
+- Analysis complete (see `explorations/genai-processors-analysis.md`)
+- Decision: Not needed for current research goals
+- Will revisit if complex pipelines emerge
 
 ## Tech Stack
 
-- **Python**: 3.11+
+- **Python**: 3.11+ (3.13 recommended)
 - **Package Management**: `uv` (always use uv for running Python and installing packages)
-- **LLM Provider**: Google Gemini (gemini-2.0-flash, gemini-2.5-pro)
+- **LLM Provider**: Google Gemini (gemini-2.0-flash-exp, gemini-2.5-pro)
 - **Core Dependencies**:
-  - `google-genai` - Gemini API client
-  - `pydantic` - Schema definitions and validation
-  - `duckdb` - Columnar database (Phase 2+)
+  - `google-genai` (1.49.0+) - Gemini API client
+  - `pydantic` (2.12.4+) - Schema definitions and validation
+  - `pydantic-settings` - Environment configuration
+  - `duckdb` (1.4.1+) - Columnar analytical database
+  - `markitdown` (0.1.3+) - HTML to Markdown conversion for web articles
+  - `python-dotenv` - Environment variable management
+- **Development Dependencies**:
+  - `pytest` + `pytest-asyncio` + `pytest-cov` - Testing
+  - `ruff` - Linting and formatting
+  - `mypy` - Type checking
 - **Optional Dependencies**:
-  - `genai-processors` - Google's processor framework (install via extras)
+  - `genai-processors` - Google's processor framework (not currently used)
 
 ## Development Commands
 
@@ -63,11 +78,20 @@ uv pip install -e ".[dev]"
 uv pip install -e ".[processors,dev]"
 ```
 
-### Running Code
+### Running Examples
 ```bash
 # Always use uv to run Python
-uv run python src/structure_it/main.py
+# Set your API key first: export GOOGLE_API_KEY='your-key-here'
+
+# Extract recipe from text (original demo)
 uv run python examples/extract_recipe.py
+
+# Extract web article from URL (with storage demo)
+uv run python examples/extract_web_article.py https://python.org/about/
+
+# Extract academic paper from PDF or URL
+uv run python examples/extract_academic_paper.py paper.pdf
+uv run python examples/extract_academic_paper.py https://arxiv.org/abs/2301.00001
 ```
 
 ### Testing
@@ -99,17 +123,84 @@ uv run mypy src/
 ### Package Structure
 ```
 src/structure_it/
-├── __init__.py           # Package initialization
-├── extractors/           # Structured data extraction using Gemini
-│   ├── base.py          # Base extractor interface
-│   └── gemini.py        # Gemini-specific implementation
-├── schemas/              # Pydantic models for structured outputs
-│   └── base.py          # Base schema types
-├── storage/              # Data persistence (Phase 2+)
-│   └── duckdb.py        # DuckDB integration
-└── utils/                # Shared utilities
-    └── hashing.py       # SHA256-based ID generation
+├── __init__.py                 # Package initialization
+├── extractors/                 # Structured data extraction
+│   ├── __init__.py
+│   ├── base.py                # Base extractor interface
+│   └── gemini.py              # Gemini API implementation
+├── schemas/                    # Pydantic models for structured outputs
+│   ├── __init__.py
+│   ├── base.py                # Base schema class
+│   ├── academic.py            # Academic papers (authors, citations, findings)
+│   ├── articles.py            # Web articles/blogs (content, key points)
+│   ├── code_docs.py           # Code documentation (functions, classes)
+│   ├── meetings.py            # Meeting transcripts (decisions, action items)
+│   └── media.py               # YouTube/podcast transcripts (speakers, segments)
+├── storage/                    # Data persistence backends
+│   ├── __init__.py
+│   ├── base.py                # Abstract storage interface
+│   ├── json_storage.py        # JSON file backend (simple, readable)
+│   └── duckdb_storage.py      # DuckDB backend (analytical queries)
+└── utils/                      # Shared utilities
+    ├── __init__.py
+    └── hashing.py             # SHA256-based deterministic ID generation
 ```
+
+### Examples Directory
+```
+examples/
+├── extract_recipe.py          # Recipe extraction (original demo)
+├── extract_web_article.py     # Web article with markitdown + storage
+└── extract_academic_paper.py  # Academic paper from PDF/URL
+```
+
+### Explorations Directory
+```
+explorations/
+├── genai-processors-analysis.md  # Analysis of genai-processors framework
+└── langextract-analysis.md       # Analysis of langextract library
+```
+
+### Implementation Details
+
+**Extraction Pipeline**:
+1. **Input**: Raw content (text, URL, PDF, markdown)
+2. **Conversion**: Optional preprocessing (e.g., markitdown for HTML → markdown)
+3. **Extraction**: GeminiExtractor with Pydantic schema → structured output
+4. **Storage**: Save to JSON and/or DuckDB with SHA256 entity ID
+5. **Retrieval**: Query by source type, entity ID, or custom filters
+
+**Storage Architecture**:
+- **BaseStorage**: Abstract interface for storage backends
+- **JSONStorage**: File-based storage in `./data/entities/{hash[:2]}/{hash}.json`
+  - Simple, human-readable
+  - Good for prototyping and small datasets
+  - No schema enforcement
+- **DuckDBStorage**: Database storage in `./data/structure_it.duckdb`
+  - Flexible JSON columns for structured data
+  - Indexed queries by source_type, created_at
+  - Analytical queries and aggregations
+  - Schema: `extracted_entities` table with JSON fields
+
+**Hash-Based IDs** (inspired by star-schema-llm-context):
+- Deterministic SHA256 hashes
+- `generate_entity_id(source_url, entity_type)` → unique ID
+- Same source always gets same ID (idempotent)
+- No auto-increment, no coordination needed
+- Natural deduplication
+
+**Domain Schemas** (5 implemented):
+1. **AcademicPaper**: Title, authors, abstract, sections, citations, findings
+2. **WebArticle**: Title, author, content, key points, technologies mentioned
+3. **CodeDocumentation**: Functions, classes, parameters, examples, cross-references
+4. **MeetingNote**: Participants, decisions, action items, topics discussed
+5. **MediaTranscript**: YouTube/podcast with speakers, segments, timestamps
+
+All schemas inherit from `BaseSchema` with:
+- Pydantic validation
+- `to_dict()` and `to_json()` methods
+- Strict typing with optional fields
+- Extra fields forbidden
 
 ### Key Design Principles
 
@@ -122,11 +213,10 @@ src/structure_it/
    - Support multimodal inputs (text, images, documents)
    - Structure data for easy LLM consumption and reasoning
 
-4. **Multiple Modeling Approaches**: Don't constrain to one pattern. Compare:
-   - Dimensional modeling (facts/dimensions)
-   - Graph structures (nodes/edges)
-   - Document/collection models
-   - Hybrid approaches
+4. **Flexible Storage**: JSON-first approach - let structure emerge from data rather than forcing it upfront.
+   - Store structured data as JSON
+   - Normalize when patterns emerge
+   - Compare JSON flexibility vs. typed columns
 
 5. **Optional Complexity**: Keep core simple. Add genai-processors or complex pipelines only when needed.
 
@@ -134,10 +224,135 @@ src/structure_it/
 
 This project draws inspiration from:
 - **star-schema-llm-context**: Dimensional modeling for LLM memory, DuckDB usage, hash-based IDs
+  - Adopted: SHA256-based IDs, DuckDB storage
+  - Deferred: Star schema modeling (may explore in Phase 3)
 - **Gemini Structured Outputs**: JSON schema generation, Pydantic integration, streaming
+  - Adopted: Pydantic schemas with structured output API
+  - Core to our extraction approach
 - **genai-processors**: Modular processor architecture, async composition patterns
+  - Evaluated: See `explorations/genai-processors-analysis.md`
+  - Decision: Deferred - too complex for current needs
+- **langextract**: Entity extraction with source grounding
+  - Evaluated: See `explorations/langextract-analysis.md`
+  - Decision: Deferred - scope mismatch with our goals
 
 See `coderef/` directory for detailed reference materials.
+
+## Usage Patterns
+
+### Basic Extraction
+```python
+import asyncio
+from structure_it.extractors import GeminiExtractor
+from structure_it.schemas.articles import WebArticle
+
+async def extract_article(url: str):
+    # Create extractor with schema
+    extractor = GeminiExtractor(schema=WebArticle)
+
+    # Extract structured data
+    article = await extractor.extract(
+        content=markdown_content,
+        prompt="Extract article information including title, author, key points."
+    )
+
+    return article
+
+# Run
+article = asyncio.run(extract_article("https://example.com"))
+print(article.to_json())
+```
+
+### Storage Usage
+```python
+from structure_it.storage import JSONStorage, DuckDBStorage
+from structure_it.utils import generate_entity_id
+
+# Choose storage backend
+json_storage = JSONStorage()           # Simple files
+duckdb_storage = DuckDBStorage()       # Analytical queries
+
+# Generate deterministic ID
+entity_id = generate_entity_id(url, "web_article")
+
+# Store
+await json_storage.store_entity(
+    entity_id=entity_id,
+    source_type="web_article",
+    source_url=url,
+    raw_content=markdown,
+    structured_data=article.to_dict(),
+    metadata={"model": "gemini-2.0-flash-exp"}
+)
+
+# Query
+articles = await duckdb_storage.query_entities(
+    source_type="web_article",
+    limit=10
+)
+
+# Count
+total = await duckdb_storage.count_entities()
+```
+
+### Creating Custom Schemas
+```python
+from structure_it.schemas.base import BaseSchema
+
+class CustomSchema(BaseSchema):
+    """Your custom extraction schema."""
+
+    title: str
+    main_content: str
+    tags: list[str] = []
+    metadata: dict[str, Any] = {}
+
+# Use with extractor
+extractor = GeminiExtractor(schema=CustomSchema)
+result = await extractor.extract(content, prompt="...")
+```
+
+### Web Content Extraction
+```python
+from markitdown import MarkItDown
+
+# Convert web page to markdown
+md = MarkItDown()
+result = md.convert("https://example.com/article")
+markdown = result.text_content
+
+# Extract structured data
+extractor = GeminiExtractor(schema=WebArticle)
+article = await extractor.extract(markdown)
+```
+
+## Tips for Development
+
+### Extraction Best Practices
+1. **Clear prompts**: Be specific about what to extract
+2. **Schema design**: Start minimal, add fields as needed
+3. **Validation**: Let Pydantic catch issues early
+4. **Iteration**: Run on real data, refine schemas
+
+### Storage Best Practices
+1. **Use JSON storage** for prototyping and inspection
+2. **Use DuckDB** when you need queries and analytics
+3. **Store in both** during research to compare
+4. **Hash IDs** ensure idempotent storage
+
+### Research Workflow
+1. Extract a few examples manually
+2. Inspect the JSON output
+3. Refine schema based on what you see
+4. Extract more examples
+5. Query DuckDB to find patterns
+6. Document findings in explorations/
+
+### Common Issues
+- **Token limits**: Long documents may hit limits (future: implement chunking)
+- **API errors**: Check GOOGLE_API_KEY environment variable
+- **Schema mismatches**: Pydantic will raise ValidationError if extraction doesn't match schema
+- **Storage paths**: Default is `./data/` - configure via environment variables if needed
 
 ## Configuration
 
@@ -154,21 +369,104 @@ STRUCTURE_IT_LOG_LEVEL=INFO
 ### API Keys
 Store API keys in `.env` file (gitignored). Never commit credentials.
 
+## What's Been Built
+
+### Completed Infrastructure
+- ✅ Base extractor interface with async support
+- ✅ GeminiExtractor with structured output API
+- ✅ Flexible storage abstraction (JSON + DuckDB backends)
+- ✅ SHA256-based deterministic IDs
+- ✅ 5 domain-specific Pydantic schemas
+- ✅ markitdown integration for web content
+- ✅ 3 working examples (recipe, web article, academic paper)
+- ✅ Development tooling (pytest, ruff, mypy)
+
+### Completed Analysis
+- ✅ **genai-processors**: Evaluated Google's pipeline framework
+  - Decision: Deferred - too complex for current needs
+  - See `explorations/genai-processors-analysis.md`
+- ✅ **langextract**: Evaluated Google's entity extraction library
+  - Decision: Deferred - scope mismatch (entity vs. generic extraction)
+  - See `explorations/langextract-analysis.md`
+- ✅ **markitdown**: Adopted for HTML → markdown conversion
+
+### Ready for Phase 3
+
+**Goal**: Extract real data, discover patterns, iterate on schemas
+
+**Next Steps**:
+1. Extract 5-10 examples from each domain:
+   - Web articles from different sources (tech blogs, news, tutorials)
+   - Academic papers from different fields (ML, systems, theory)
+   - Code documentation (Python, JavaScript, different styles)
+   - Meeting transcripts (standup, planning, retrospective)
+   - Media transcripts (YouTube tech talks, podcasts)
+
+2. Analyze stored data:
+   - Query DuckDB to find patterns in JSON structures
+   - Which fields are consistently populated?
+   - Which are sparse or domain-specific?
+   - How does structure vary within domains?
+
+3. Document findings:
+   - Create `explorations/json-patterns-analysis.md`
+   - Create `explorations/schema-evolution.md`
+   - Compare JSON vs. DuckDB trade-offs
+
+4. Iterate on schemas based on real data
+
 ## Development Workflow
 
 1. **Iterate Quickly**: Use examples/ directory to test ideas
-2. **Document Findings**: Add notes to docs/ or inline comments about what works/doesn't
+2. **Document Findings**: Add exploration documents for analysis and decisions
 3. **Version Tracking**: Update CHANGELOG.md (use x.x.x versioning)
 4. **No Auto-Commits**: Git commits are manual, not automatic
 5. **Stay Focused**: One LLM provider (Gemini) to start - can expand later
+6. **Research First**: Extract real data before making architecture decisions
 
-## Research Questions to Explore
+## Research Questions
 
-- How do different modeling approaches (dimensional vs. graph vs. document) affect LLM context efficiency?
-- What's the right balance between structure and flexibility?
-- When is genai-processors worth the complexity vs. direct API calls?
-- How can we optimize for both human and LLM data consumption?
-- What patterns emerge for multimodal data structuring?
+### Answered (Phase 1-2)
+- ✅ **Is genai-processors worth the complexity vs. direct API calls?**
+  - Answer: No, for our use case. Direct API is simpler and clearer for research.
+  - See: `explorations/genai-processors-analysis.md`
+
+- ✅ **Should we use langextract for entity extraction?**
+  - Answer: No, scope mismatch. We need generic schemas, not just entities.
+  - See: `explorations/langextract-analysis.md`
+
+- ✅ **How should we structure storage?**
+  - Answer: Flexible abstraction with JSON + DuckDB backends. Let patterns emerge.
+  - Implementation: `storage/` with both backends implemented.
+
+### Exploring (Phase 3)
+- 🔄 **What patterns emerge from real data across domains?**
+  - Need to extract 5-10 examples per domain
+  - Analyze what fields are consistently populated
+  - Document patterns in `explorations/json-patterns-analysis.md`
+
+- 🔄 **What's the right balance between structure and flexibility?**
+  - JSON storage allows flexibility
+  - When should we normalize into typed columns?
+  - How do schemas evolve based on real data?
+
+- 🔄 **How do different storage approaches affect queryability?**
+  - JSON files: simple, readable, no schema
+  - DuckDB with JSON columns: queryable but flexible
+  - Future: Fully normalized tables vs. JSON columns
+
+### Future (Phase 4+)
+- ⏸️ **How do different modeling approaches (dimensional vs. graph vs. document) affect LLM context efficiency?**
+  - Will explore after gathering real data
+  - May implement star schema if patterns warrant it
+  - Graph models for relationship-heavy domains?
+
+- ⏸️ **How can we optimize for both human and LLM data consumption?**
+  - Depends on patterns discovered
+  - May need context assembly strategies
+
+- ⏸️ **What patterns emerge for multimodal data structuring?**
+  - Need more multimodal examples (PDFs with images, videos, etc.)
 
 ## References
 

@@ -1,0 +1,4 @@
+policy_id,policy_title,policy_type,policy_version,effective_date,filename,complexity,generated_at
+FIN-001,Expense Reimbursement Policy,Financial,1.0,2024-01-15,FIN-001_expense_reimbursement.md,simple,2025-11-13T13:51:58.273126
+IT-001,Access Control Policy,IT Security,1.0,2024-01-15,IT-001_access_control.md,medium,2025-11-13T13:51:58.273335
+HR-001,Code of Conduct,HR,1.0,2024-01-15,HR-001_code_of_conduct.md,simple,2025-11-13T13:51:58.273337

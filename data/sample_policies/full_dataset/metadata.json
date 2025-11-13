@@ -1,0 +1,132 @@
+[
+  {
+    "policy_id": "FIN-001",
+    "policy_title": "Expense Reimbursement Policy",
+    "policy_type": "Financial",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "FIN-001_expense_reimbursement.md",
+    "complexity": "simple",
+    "generated_at": "2025-11-13T13:51:54.710522"
+  },
+  {
+    "policy_id": "FIN-002",
+    "policy_title": "Capital Expenditure Approval Policy",
+    "policy_type": "Financial",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "FIN-002_capital_expenditure.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:54.710733"
+  },
+  {
+    "policy_id": "FIN-003",
+    "policy_title": "Financial Authority Matrix and Approval Limits",
+    "policy_type": "Financial",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "FIN-003_financial_authority_matrix.md",
+    "complexity": "complex",
+    "generated_at": "2025-11-13T13:51:54.710736"
+  },
+  {
+    "policy_id": "IT-001",
+    "policy_title": "Acceptable Use Policy",
+    "policy_type": "IT Security",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "IT-001_acceptable_use.md",
+    "complexity": "simple",
+    "generated_at": "2025-11-13T13:51:54.710738"
+  },
+  {
+    "policy_id": "IT-002",
+    "policy_title": "Access Control and Identity Management Policy",
+    "policy_type": "IT Security",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "IT-002_access_control.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:54.710740"
+  },
+  {
+    "policy_id": "IT-003",
+    "policy_title": "Information Security and Data Protection Policy",
+    "policy_type": "IT Security",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "IT-003_information_security.md",
+    "complexity": "complex",
+    "generated_at": "2025-11-13T13:51:54.710741"
+  },
+  {
+    "policy_id": "HR-001",
+    "policy_title": "Code of Conduct",
+    "policy_type": "HR",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "HR-001_code_of_conduct.md",
+    "complexity": "simple",
+    "generated_at": "2025-11-13T13:51:54.710743"
+  },
+  {
+    "policy_id": "HR-002",
+    "policy_title": "Remote Work and Flexible Work Arrangements",
+    "policy_type": "HR",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "HR-002_remote_work.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:54.710744"
+  },
+  {
+    "policy_id": "HR-003",
+    "policy_title": "Performance Management and Employee Development",
+    "policy_type": "HR",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "HR-003_performance_management.md",
+    "complexity": "complex",
+    "generated_at": "2025-11-13T13:51:54.710746"
+  },
+  {
+    "policy_id": "LEG-001",
+    "policy_title": "Conflict of Interest and Disclosure Policy",
+    "policy_type": "Legal",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "LEG-001_conflict_of_interest.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:54.710747"
+  },
+  {
+    "policy_id": "LEG-002",
+    "policy_title": "Records Retention and Document Management Policy",
+    "policy_type": "Legal",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "LEG-002_records_retention.md",
+    "complexity": "complex",
+    "generated_at": "2025-11-13T13:51:54.710748"
+  },
+  {
+    "policy_id": "COMP-001",
+    "policy_title": "Privacy and Data Protection Compliance",
+    "policy_type": "Compliance",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "COMP-001_privacy_compliance.md",
+    "complexity": "medium",
+    "generated_at": "2025-11-13T13:51:54.710750"
+  },
+  {
+    "policy_id": "COMP-002",
+    "policy_title": "Anti-Corruption and Ethical Business Practices",
+    "policy_type": "Compliance",
+    "policy_version": "1.2",
+    "effective_date": "2024-01-15",
+    "filename": "COMP-002_anti_corruption.md",
+    "complexity": "complex",
+    "generated_at": "2025-11-13T13:51:54.710751"
+  }
+]

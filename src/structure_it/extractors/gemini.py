@@ -20,7 +20,7 @@ class GeminiExtractor(BaseExtractor[TSchema]):
     def __init__(
         self,
         schema: type[TSchema],
-        model_name: str = "gemini-2.0-flash-exp",
+        model_name: str = "gemini-2.5-flash",
         api_key: str | None = None,
         **model_kwargs: Any,
     ) -> None:
@@ -28,7 +28,7 @@ class GeminiExtractor(BaseExtractor[TSchema]):
 
         Args:
             schema: Pydantic model class defining the output structure.
-            model_name: Gemini model to use (default: gemini-2.0-flash-exp).
+            model_name: Gemini model to use (default: gemini-2.5-flash).
             api_key: Google API key (if not set via environment).
             **model_kwargs: Additional model configuration parameters.
         """

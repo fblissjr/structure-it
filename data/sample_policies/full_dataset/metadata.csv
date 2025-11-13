@@ -1,0 +1,14 @@
+policy_id,policy_title,policy_type,policy_version,effective_date,filename,complexity,generated_at
+FIN-001,Expense Reimbursement Policy,Financial,1.2,2024-01-15,FIN-001_expense_reimbursement.md,simple,2025-11-13T13:51:54.710522
+FIN-002,Capital Expenditure Approval Policy,Financial,1.2,2024-01-15,FIN-002_capital_expenditure.md,medium,2025-11-13T13:51:54.710733
+FIN-003,Financial Authority Matrix and Approval Limits,Financial,1.2,2024-01-15,FIN-003_financial_authority_matrix.md,complex,2025-11-13T13:51:54.710736
+IT-001,Acceptable Use Policy,IT Security,1.2,2024-01-15,IT-001_acceptable_use.md,simple,2025-11-13T13:51:54.710738
+IT-002,Access Control and Identity Management Policy,IT Security,1.2,2024-01-15,IT-002_access_control.md,medium,2025-11-13T13:51:54.710740
+IT-003,Information Security and Data Protection Policy,IT Security,1.2,2024-01-15,IT-003_information_security.md,complex,2025-11-13T13:51:54.710741
+HR-001,Code of Conduct,HR,1.2,2024-01-15,HR-001_code_of_conduct.md,simple,2025-11-13T13:51:54.710743
+HR-002,Remote Work and Flexible Work Arrangements,HR,1.2,2024-01-15,HR-002_remote_work.md,medium,2025-11-13T13:51:54.710744
+HR-003,Performance Management and Employee Development,HR,1.2,2024-01-15,HR-003_performance_management.md,complex,2025-11-13T13:51:54.710746
+LEG-001,Conflict of Interest and Disclosure Policy,Legal,1.2,2024-01-15,LEG-001_conflict_of_interest.md,medium,2025-11-13T13:51:54.710747
+LEG-002,Records Retention and Document Management Policy,Legal,1.2,2024-01-15,LEG-002_records_retention.md,complex,2025-11-13T13:51:54.710748
+COMP-001,Privacy and Data Protection Compliance,Compliance,1.2,2024-01-15,COMP-001_privacy_compliance.md,medium,2025-11-13T13:51:54.710750
+COMP-002,Anti-Corruption and Ethical Business Practices,Compliance,1.2,2024-01-15,COMP-002_anti_corruption.md,complex,2025-11-13T13:51:54.710751

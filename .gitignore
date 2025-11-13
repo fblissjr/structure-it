@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.claude
 
 # C extensions
 *.so
@@ -32,6 +33,7 @@ llmfiles/.llmfiles_patterns/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+.DS_Store
 
 # Installer logs
 pip-log.txt
