@@ -14,6 +14,7 @@ from pathlib import Path
 
 from markitdown import MarkItDown
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors import GeminiExtractor
 from structure_it.schemas.academic import AcademicPaper
 from structure_it.storage import JSONStorage
@@ -81,7 +82,8 @@ async def main() -> None:
 
     # Extract
     print("Extracting structured data...")
-    extractor = GeminiExtractor(schema=AcademicPaper, model_name="gemini-2.0-flash-exp")
+    # Uses default model from config (can override via STRUCTURE_IT_MODEL env var)
+    extractor = GeminiExtractor(schema=AcademicPaper)
 
     try:
         paper = await extractor.extract(
@@ -127,7 +129,7 @@ async def main() -> None:
         source_url=source_url,
         raw_content=content,
         structured_data=paper.to_dict(),
-        metadata={"model": "gemini-2.0-flash-exp"},
+        metadata={"model": DEFAULT_MODEL},
     )
 
     print(f"✓ Stored in JSON storage")

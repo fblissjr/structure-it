@@ -117,7 +117,7 @@ def generate_micro_metadata(scan_existing: bool = False):
         scan_existing: If True, scan for existing files and use actual data.
     """
     # Create output directory
-    output_dir = Path("sample_policies/micro_dataset")
+    output_dir = Path("data/sample_policies/micro_dataset")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Check if we should scan existing files
@@ -194,7 +194,7 @@ def generate_full_metadata(scan_existing: bool = False):
         scan_existing: If True, scan for existing files and use actual data.
     """
     # Create output directory
-    output_dir = Path("sample_policies/full_dataset")
+    output_dir = Path("data/sample_policies/full_dataset")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Check if we should scan existing files
@@ -431,11 +431,11 @@ def main():
     print("=" * 80)
     print()
     print("Next steps:")
-    print("1. Review the metadata files in sample_policies/")
+    print("1. Review the metadata files in data/sample_policies/")
     print("2. Use with existing policies or generate content separately")
     print("3. Test extraction with:")
     print("   uv run python examples/extract_policy_requirements.py \\")
-    print("     <policy-file>.md --metadata sample_policies/full_dataset/metadata.json")
+    print("     <policy-file>.md --metadata data/sample_policies/full_dataset/metadata.json")
     print()
 
 

@@ -5,7 +5,7 @@ This directory contains metadata and (optionally) generated policy documents for
 ## Directory Structure
 
 ```
-sample_policies/
+data/sample_policies/
 ├── README.md                    # This file
 ├── micro_dataset/               # 3 policies for quick testing
 │   ├── metadata.json           # Policy metadata (list format)
@@ -104,8 +104,8 @@ If you've generated policy content:
 ```bash
 # Extract requirements from a single policy
 uv run python examples/extract_policy_requirements.py \
-  sample_policies/full_dataset/FIN-001_expense_reimbursement.md \
-  --metadata sample_policies/full_dataset/metadata.json
+  data/sample_policies/full_dataset/FIN-001_expense_reimbursement.md \
+  --metadata data/sample_policies/full_dataset/metadata.json
 
 # The script will automatically find FIN-001 metadata from the list
 ```
@@ -172,14 +172,14 @@ To remove generated policies but keep metadata:
 
 ```bash
 # Remove all .md files but keep metadata
-rm sample_policies/micro_dataset/*.md
-rm sample_policies/full_dataset/*.md
+rm data/sample_policies/micro_dataset/*.md
+rm data/sample_policies/full_dataset/*.md
 ```
 
 To start fresh:
 
 ```bash
 # Remove everything and regenerate metadata
-rm -rf sample_policies/
+rm -rf data/sample_policies/
 uv run python scripts/generate_metadata_only.py
 ```

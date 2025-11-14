@@ -4,13 +4,14 @@ A research sandbox for exploring structured data extraction and modeling in LLM-
 
 ## Overview
 
-**structure-it** provides tools for extracting structured data from unstructured sources using multimodal LLMs (starting with Google Gemini) and experimenting with different data modeling approaches optimized for LLM context and reuse.
+**structure-it** is a research sandbox for exploring structured data extraction and LLM-driven data pipelines. Extract structured data from any unstructured source using multimodal LLMs (Gemini), experiment with data modeling approaches, and build reusable components for extraction and generation.
 
 This is an exploratory research project focused on:
-- Structured data extraction from text, images, and documents
+- Structured data extraction from text, images, PDFs, and web content
+- Domain-specific schemas (academic papers, articles, code docs, meeting notes, policies, etc.)
 - Data modeling approaches for LLM context management
-- Multimodal data pipeline experimentation
-- Comparing different modeling patterns (dimensional, graph, hybrid)
+- Reusable generators for creating synthetic test data
+- Comparing different storage patterns (JSON, DuckDB, future: star schema/graph)
 
 ## Quick Start
 
@@ -28,24 +29,45 @@ uv pip install -e ".[dev]"
 uv pip install -e ".[processors,dev]"
 ```
 
-### Setup API Key
+### Configuration
+
+All settings are centralized in environment variables:
 
 ```bash
-# Copy example environment file
-cp .env.example .env
-
-# Edit .env and add your Google API key
+# Required: Google API key
+export GOOGLE_API_KEY="your-api-key-here"
 # Get your key from: https://aistudio.google.com/app/apikey
+
+# Optional: Model configuration (default: gemini-2.5-flash)
+export STRUCTURE_IT_MODEL="gemini-2.5-flash"  # or gemini-2.5-pro
+
+# Optional: Generation temperature (default: 0.8)
+export STRUCTURE_IT_TEMPERATURE="0.8"
 ```
 
-### Run Example
+No hardcoded model names anywhere! Everything uses these config values.
+
+### Run Examples
 
 ```bash
 # Extract structured recipe data from text
 uv run python examples/extract_recipe.py
+
+# Extract web article from URL (with storage)
+uv run python examples/extract_web_article.py https://python.org/about/
+
+# Extract academic paper from PDF/URL or generated ArXiv papers
+uv run python examples/extract_academic_paper.py paper.pdf
+
+# Extract policy requirements (example domain-specific extractor)
+uv run python examples/extract_policy_requirements.py \
+  data/sample_policies/full_dataset/FIN-001_expense_reimbursement.md \
+  --metadata data/sample_policies/full_dataset/metadata.json
 ```
 
 ## Example Usage
+
+### Basic Extraction
 
 ```python
 import asyncio
@@ -73,11 +95,93 @@ async def main():
 asyncio.run(main())
 ```
 
+### Domain-Specific Extraction
+
+```python
+import asyncio
+from structure_it.extractors import PolicyRequirementsExtractor
+
+async def main():
+    # Example: Policy requirements (one domain among many)
+    extractor = PolicyRequirementsExtractor()
+
+    requirements = await extractor.extract(
+        pdf_path="policy.pdf",  # Supports both PDF and markdown
+        policy_metadata={
+            "policy_id": "FIN-001",
+            "policy_title": "Expense Reimbursement Policy",
+            "policy_type": "Financial",
+        }
+    )
+
+    print(f"Extracted {requirements.total_requirements} requirements")
+
+asyncio.run(main())
+```
+
+See [docs/policy_requirements_guide.md](docs/policy_requirements_guide.md) for policy extraction details.
+
+## Features
+
+### Core Components
+
+**Extractors** - Extract structured data from unstructured content
+- `GeminiExtractor`: General-purpose extraction with any Pydantic schema
+- `PolicyRequirementsExtractor`: Example domain-specific extractor
+- Easy to create custom extractors for any domain
+
+**Generators** - Create synthetic content for testing
+- `BaseGenerator`: Reusable LLM-powered content generation
+- `PolicyGenerator`: Policy documents (5 domains: Financial, IT, HR, Legal, Compliance)
+- `ArxivGenerator`: AI/ML research papers (6 focus areas)
+- `CivicDocumentGenerator`: Local government documents (agendas, minutes, proposals)
+- Extensible pattern - easy to add more domains
+
+**Schemas** - 6 domain-specific Pydantic models
+- Academic Papers, Web Articles, Code Documentation
+- Meeting Notes, Media Transcripts, Policy Requirements
+- BaseSchema with validation and serialization
+- Easy to add new domains
+
+**Storage** - Flexible persistence backends
+- JSON Storage: Simple file-based (great for prototyping)
+- DuckDB Storage: Analytical queries with JSON columns
+- SHA256-based IDs: Deterministic, idempotent
+
+**Config** - Centralized configuration (`config.py`)
+- Model defaults via `STRUCTURE_IT_MODEL` env var
+- Temperature, storage paths, all configurable
+- No hardcoded values scattered through code
+
 ## Project Status
 
-- Minimal architecture with direct Gemini API integration
-- Pydantic schemas for structured outputs
-- Basic extraction capabilities
+**Phase 1: Foundation** ✅ COMPLETE
+- Gemini API integration with centralized config
+- 6 domain-specific schemas (academic, articles, code, meetings, media, policy)
+- GeminiExtractor + example domain extractors
+- BaseGenerator + 3 domain generators (policy, arxiv, civic)
+- Sample datasets: 13 policies, 8 ArXiv papers, 8 civic documents
+- 33 passing tests
+
+**Phase 2: Storage** ✅ COMPLETE
+- JSON and DuckDB backends
+- Deterministic ID generation
+- Full CRUD operations
+
+**Phase 3: Modeling** 🔄 READY
+- Extract real data across domains
+- Compare modeling approaches
+- Discover patterns for LLM context optimization
+
+## Documentation
+
+- **[CLAUDE.md](CLAUDE.md)** - Complete project guide for development
+- **[data/README.md](data/README.md)** - Sample datasets overview
+- **[docs/policy_requirements_guide.md](docs/policy_requirements_guide.md)** - Policy extraction example
+- **[explorations/](explorations/)** - Research notes and analysis documents
+
+The project includes sample datasets for three domains (policies, ArXiv papers, civic docs).
+The architecture supports any domain via custom schemas, extractors, and generators.
 
 ## License
 

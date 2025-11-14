@@ -45,13 +45,13 @@ This is an exploratory research project, not a production library. The architect
 
 - **Python**: 3.11+ (3.13 recommended)
 - **Package Management**: `uv` (always use uv for running Python and installing packages)
-- **LLM Provider**: Google Gemini (gemini-2.0-flash-exp, gemini-2.5-pro)
+- **LLM Provider**: Google Gemini (default: `gemini-2.5-flash`, configurable via `STRUCTURE_IT_MODEL`)
 - **Core Dependencies**:
   - `google-genai` (1.49.0+) - Gemini API client
   - `pydantic` (2.12.4+) - Schema definitions and validation
   - `pydantic-settings` - Environment configuration
   - `duckdb` (1.4.1+) - Columnar analytical database
-  - `markitdown` (0.1.3+) - HTML to Markdown conversion for web articles
+  - `markitdown` (0.1.3+) - HTML to Markdown conversion for web articles and PDFs
   - `python-dotenv` - Environment variable management
 - **Development Dependencies**:
   - `pytest` + `pytest-asyncio` + `pytest-cov` - Testing
@@ -59,6 +59,27 @@ This is an exploratory research project, not a production library. The architect
   - `mypy` - Type checking
 - **Optional Dependencies**:
   - `genai-processors` - Google's processor framework (not currently used)
+
+## Configuration
+
+All model defaults and settings are centralized in `src/structure_it/config.py`:
+
+```bash
+# Model configuration (defaults to gemini-2.5-flash)
+export STRUCTURE_IT_MODEL="gemini-2.5-flash"  # or gemini-2.5-pro for higher quality
+
+# Generation settings
+export STRUCTURE_IT_TEMPERATURE="0.8"
+
+# Storage paths
+export STRUCTURE_IT_DB_PATH="./data/structure_it.duckdb"
+export STRUCTURE_IT_JSON_PATH="./data/entities"
+
+# API key (required)
+export GOOGLE_API_KEY="your-api-key-here"
+```
+
+No more hunting for hardcoded model names! Everything respects these environment variables.
 
 ## Development Commands
 
@@ -92,6 +113,12 @@ uv run python examples/extract_web_article.py https://python.org/about/
 # Extract academic paper from PDF or URL
 uv run python examples/extract_academic_paper.py paper.pdf
 uv run python examples/extract_academic_paper.py https://arxiv.org/abs/2301.00001
+
+# Extract policy requirements from PDF
+uv run python examples/extract_policy_requirements.py policy.pdf \
+  --policy-id FIN-001 \
+  --policy-title "Expense Reimbursement Policy" \
+  --policy-type Financial
 ```
 
 ### Testing
@@ -124,42 +151,83 @@ uv run mypy src/
 ```
 src/structure_it/
 ├── __init__.py                 # Package initialization
+├── config.py                   # Centralized configuration (model defaults, paths)
 ├── extractors/                 # Structured data extraction
 │   ├── __init__.py
 │   ├── base.py                # Base extractor interface
-│   └── gemini.py              # Gemini API implementation
-├── schemas/                    # Pydantic models for structured outputs
+│   ├── gemini.py              # Gemini API implementation (uses config)
+│   └── policy_extractor.py    # Policy requirements extractor (PDF/markdown → requirements)
+├── generators/                 # LLM-powered content generation
+│   ├── __init__.py
+│   ├── base.py                # BaseGenerator for reusable generation logic
+│   ├── policy.py              # PolicyGenerator for policy documents
+│   ├── arxiv.py               # ArxivGenerator for AI/ML research papers
+│   └── civic.py               # CivicDocumentGenerator for government docs
+├── schemas/                    # Pydantic models for structured outputs (6 domains)
 │   ├── __init__.py
 │   ├── base.py                # Base schema class
-│   ├── academic.py            # Academic papers (authors, citations, findings)
-│   ├── articles.py            # Web articles/blogs (content, key points)
-│   ├── code_docs.py           # Code documentation (functions, classes)
-│   ├── meetings.py            # Meeting transcripts (decisions, action items)
-│   └── media.py               # YouTube/podcast transcripts (speakers, segments)
+│   ├── academic.py            # Academic papers
+│   ├── articles.py            # Web articles/blogs
+│   ├── code_docs.py           # Code documentation
+│   ├── meetings.py            # Meeting transcripts
+│   ├── media.py               # YouTube/podcast transcripts
+│   └── policy_requirements.py # Policy requirements (example domain-specific schema)
 ├── storage/                    # Data persistence backends
 │   ├── __init__.py
 │   ├── base.py                # Abstract storage interface
-│   ├── json_storage.py        # JSON file backend (simple, readable)
-│   └── duckdb_storage.py      # DuckDB backend (analytical queries)
+│   ├── json_storage.py        # JSON file backend
+│   └── duckdb_storage.py      # DuckDB backend
 └── utils/                      # Shared utilities
     ├── __init__.py
     └── hashing.py             # SHA256-based deterministic ID generation
 ```
 
+**Key Components:**
+- **config.py**: Single source of truth for model names, temperature, paths
+- **extractors/**: Extract structured data from unstructured content (core capability)
+- **generators/**: Generate synthetic content for testing extraction (reusable base class)
+- **schemas/**: Domain-specific Pydantic models (policy extraction is just one example)
+- **storage/**: Flexible backends for storing extracted data
+
 ### Examples Directory
 ```
 examples/
-├── extract_recipe.py          # Recipe extraction (original demo)
-├── extract_web_article.py     # Web article with markitdown + storage
-└── extract_academic_paper.py  # Academic paper from PDF/URL
+├── extract_recipe.py               # Recipe extraction (original demo)
+├── extract_web_article.py          # Web article with markitdown + storage
+├── extract_academic_paper.py       # Academic paper from PDF/URL
+└── extract_policy_requirements.py  # Policy requirements from PDFs
 ```
+
+### Scripts Directory
+```
+scripts/
+├── generate_micro_dataset.py     # Generate 3-policy test dataset
+├── generate_full_dataset.py      # Generate 13-policy comprehensive dataset
+├── generate_metadata_only.py     # Generate policy metadata without API calls
+├── generate_arxiv_dataset.py     # Generate 8 AI/ML ArXiv papers
+└── generate_civic_dataset.py     # Generate 8 civic/government documents
+```
+
+All scripts use the BaseGenerator pattern, demonstrating extensibility across domains.
 
 ### Explorations Directory
 ```
 explorations/
 ├── genai-processors-analysis.md  # Analysis of genai-processors framework
-└── langextract-analysis.md       # Analysis of langextract library
+├── langextract-analysis.md       # Analysis of langextract library
+└── policy/                       # Policy requirements exploration (one domain example)
+    ├── policy_project.md         # Project plan for policy extraction system
+    └── policy_dataset.md         # Dataset strategy for testing
 ```
+
+### Documentation
+```
+docs/
+└── policy_requirements_guide.md  # Detailed guide for policy extraction use case
+```
+
+For other use cases (web articles, academic papers, etc.), examples demonstrate patterns
+without requiring separate guides. Create domain-specific docs as needed.
 
 ### Implementation Details
 
@@ -169,6 +237,18 @@ explorations/
 3. **Extraction**: GeminiExtractor with Pydantic schema → structured output
 4. **Storage**: Save to JSON and/or DuckDB with SHA256 entity ID
 5. **Retrieval**: Query by source type, entity ID, or custom filters
+
+**Generator Architecture**:
+- **BaseGenerator**: Reusable LLM-powered content generation
+  - Centralized model/temperature management via config
+  - Async text generation with customizable prompts
+  - Save output as markdown/JSON/etc
+  - Extensible for any domain
+- **Domain-Specific Generators** (extend BaseGenerator):
+  - **PolicyGenerator**: Policy documents (5 domains: Financial, IT, HR, Legal, Compliance)
+  - **ArxivGenerator**: AI/ML research papers (6 focus areas: ML, CV, NLP, Robotics, etc.)
+  - **CivicDocumentGenerator**: Local government docs (agendas, minutes, proposals, resolutions)
+  - Easy to add more: ArticleGenerator, CodeDocGenerator, etc.
 
 **Storage Architecture**:
 - **BaseStorage**: Abstract interface for storage backends
@@ -189,12 +269,17 @@ explorations/
 - No auto-increment, no coordination needed
 - Natural deduplication
 
-**Domain Schemas** (5 implemented):
+**Domain Schemas** (6 implemented):
 1. **AcademicPaper**: Title, authors, abstract, sections, citations, findings
 2. **WebArticle**: Title, author, content, key points, technologies mentioned
 3. **CodeDocumentation**: Functions, classes, parameters, examples, cross-references
 4. **MeetingNote**: Participants, decisions, action items, topics discussed
 5. **MediaTranscript**: YouTube/podcast with speakers, segments, timestamps
+6. **PolicyRequirements**: Requirements extraction from policy/procedure documents
+   - Individual requirements with classification (mandatory/recommended/prohibited)
+   - Applicability tracking (roles, conditions, exceptions)
+   - Regulatory basis capture (SOX, GDPR, etc.)
+   - Domain-specific extraction for Financial, IT Security, HR, Legal, Compliance
 
 All schemas inherit from `BaseSchema` with:
 - Pydantic validation
@@ -326,6 +411,37 @@ extractor = GeminiExtractor(schema=WebArticle)
 article = await extractor.extract(markdown)
 ```
 
+### Policy Requirements Extraction
+```python
+from structure_it.extractors import PolicyRequirementsExtractor
+
+# Extract requirements from policy PDF
+extractor = PolicyRequirementsExtractor()
+
+requirements = await extractor.extract(
+    pdf_path="expense_policy.pdf",
+    policy_metadata={
+        "policy_id": "FIN-001",
+        "policy_title": "Expense Reimbursement Policy",
+        "policy_type": "Financial",
+        "policy_version": "1.0",
+        "effective_date": "2024-01-15",
+    }
+)
+
+# Access extracted requirements
+print(f"Total: {requirements.total_requirements}")
+print(f"Mandatory: {requirements.total_mandatory}")
+print(f"Recommended: {requirements.total_recommended}")
+
+for req in requirements.requirements:
+    print(f"{req.requirement_type}: {req.statement}")
+    if req.applies_to:
+        print(f"  Applies to: {', '.join(req.applies_to)}")
+    if req.regulatory_basis:
+        print(f"  Regulatory: {', '.join(req.regulatory_basis)}")
+```
+
 ## Tips for Development
 
 ### Extraction Best Practices
@@ -373,13 +489,17 @@ Store API keys in `.env` file (gitignored). Never commit credentials.
 
 ### Completed Infrastructure
 - ✅ Base extractor interface with async support
-- ✅ GeminiExtractor with structured output API
+- ✅ GeminiExtractor with structured output API + centralized config
 - ✅ Flexible storage abstraction (JSON + DuckDB backends)
 - ✅ SHA256-based deterministic IDs
-- ✅ 5 domain-specific Pydantic schemas
-- ✅ markitdown integration for web content
-- ✅ 3 working examples (recipe, web article, academic paper)
+- ✅ 6 domain-specific Pydantic schemas
+- ✅ markitdown integration for web content and PDFs
+- ✅ 4 working examples (recipe, web article, academic paper, policy requirements)
 - ✅ Development tooling (pytest, ruff, mypy)
+- ✅ BaseGenerator + 3 domain generators (policy, arxiv, civic)
+- ✅ Sample datasets: 13 policies, 8 ArXiv papers, 8 civic documents
+- ✅ Comprehensive test suite (33 tests passing)
+- ✅ Data organized in ./data/ directory
 
 ### Completed Analysis
 - ✅ **genai-processors**: Evaluated Google's pipeline framework

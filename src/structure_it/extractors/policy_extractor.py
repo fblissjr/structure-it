@@ -7,6 +7,7 @@ from typing import Any
 
 from markitdown import MarkItDown
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors.gemini import GeminiExtractor
 from structure_it.schemas.policy_requirements import PolicyRequirements
 
@@ -14,50 +15,63 @@ from structure_it.schemas.policy_requirements import PolicyRequirements
 class PolicyRequirementsExtractor:
     """Extract structured requirements from policy documents.
 
-    Uses markitdown to convert PDFs to markdown, then extracts
-    requirements using Gemini with a focused prompt.
+    Supports both PDF and markdown files. Uses markitdown to convert PDFs
+    to markdown if needed, then extracts requirements using Gemini with
+    a focused prompt.
     """
 
     def __init__(
         self,
-        model_name: str = "gemini-2.5-flash-lite",
+        model_name: str | None = None,
         api_key: str | None = None,
         **model_kwargs: Any,
     ) -> None:
         """Initialize the policy requirements extractor.
 
         Args:
-            model_name: Gemini model to use (default: gemini-2.5-flash).
+            model_name: Gemini model to use (defaults to config.DEFAULT_MODEL).
             api_key: Google API key (if not set via environment).
             **model_kwargs: Additional model configuration parameters.
         """
-        self.model_name = model_name
+        self.model_name = model_name or DEFAULT_MODEL
         self.extractor = GeminiExtractor(
             schema=PolicyRequirements,
-            model_name=model_name,
+            model_name=self.model_name,
             api_key=api_key,
             **model_kwargs,
         )
         self.markdown_converter = MarkItDown()
 
-    def _convert_pdf_to_markdown(self, pdf_path: str | Path) -> str:
-        """Convert PDF to markdown text.
+    def _convert_to_markdown(self, file_path: str | Path) -> str:
+        """Convert document to markdown text (auto-detects PDF or markdown).
 
         Args:
-            pdf_path: Path to PDF file.
+            file_path: Path to PDF or markdown file.
 
         Returns:
-            Markdown content of the PDF.
+            Markdown content of the document.
 
         Raises:
-            ValueError: If file doesn't exist or conversion fails.
+            ValueError: If file doesn't exist or has unsupported format.
         """
-        pdf_path = Path(pdf_path)
-        if not pdf_path.exists():
-            raise ValueError(f"PDF file not found: {pdf_path}")
+        file_path = Path(file_path)
+        if not file_path.exists():
+            raise ValueError(f"File not found: {file_path}")
 
-        result = self.markdown_converter.convert(str(pdf_path))
-        return result.text_content
+        # Auto-detect file type from extension
+        suffix = file_path.suffix.lower()
+
+        if suffix == ".md":
+            # Read markdown directly
+            return file_path.read_text(encoding="utf-8")
+        elif suffix == ".pdf":
+            # Convert PDF to markdown using markitdown
+            result = self.markdown_converter.convert(str(file_path))
+            return result.text_content
+        else:
+            raise ValueError(
+                f"Unsupported file format: {suffix}. Supported: .pdf, .md"
+            )
 
     def _build_extraction_prompt(self, policy_type: str) -> str:
         """Build extraction prompt for a policy type.
@@ -150,10 +164,10 @@ Pay special attention to:
         policy_metadata: dict[str, Any],
         **kwargs: Any,
     ) -> PolicyRequirements:
-        """Extract requirements from a policy PDF.
+        """Extract requirements from a policy document (PDF or markdown).
 
         Args:
-            pdf_path: Path to the policy PDF file.
+            pdf_path: Path to the policy file (.pdf or .md).
             policy_metadata: Metadata about the policy containing:
                 - policy_id: Unique policy identifier
                 - policy_title: Policy name
@@ -166,7 +180,7 @@ Pay special attention to:
             PolicyRequirements object with all extracted requirements.
 
         Raises:
-            ValueError: If required metadata is missing.
+            ValueError: If required metadata is missing or file format unsupported.
             ExtractionError: If extraction fails.
         """
         # Validate required metadata
@@ -179,8 +193,8 @@ Pay special attention to:
         policy_title = policy_metadata["policy_title"]
         policy_type = policy_metadata["policy_type"]
 
-        # Convert PDF to markdown
-        markdown_content = self._convert_pdf_to_markdown(pdf_path)
+        # Convert document to markdown (handles both PDF and .md)
+        markdown_content = self._convert_to_markdown(pdf_path)
 
         # Build extraction prompt
         prompt = self._build_extraction_prompt(policy_type)
@@ -214,10 +228,10 @@ Pay special attention to:
         pdf_paths: list[tuple[str | Path, dict[str, Any]]],
         **kwargs: Any,
     ) -> list[PolicyRequirements]:
-        """Extract requirements from multiple policy PDFs.
+        """Extract requirements from multiple policy documents (PDF or markdown).
 
         Args:
-            pdf_paths: List of (pdf_path, policy_metadata) tuples.
+            pdf_paths: List of (file_path, policy_metadata) tuples.
             **kwargs: Additional generation parameters.
 
         Returns:

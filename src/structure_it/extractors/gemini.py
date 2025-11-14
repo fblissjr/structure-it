@@ -7,6 +7,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors.base import BaseExtractor, ExtractionError, TSchema
 
 
@@ -20,7 +21,7 @@ class GeminiExtractor(BaseExtractor[TSchema]):
     def __init__(
         self,
         schema: type[TSchema],
-        model_name: str = "gemini-2.5-flash",
+        model_name: str | None = None,
         api_key: str | None = None,
         **model_kwargs: Any,
     ) -> None:
@@ -28,12 +29,12 @@ class GeminiExtractor(BaseExtractor[TSchema]):
 
         Args:
             schema: Pydantic model class defining the output structure.
-            model_name: Gemini model to use (default: gemini-2.5-flash).
+            model_name: Gemini model to use (defaults to config.DEFAULT_MODEL).
             api_key: Google API key (if not set via environment).
             **model_kwargs: Additional model configuration parameters.
         """
         super().__init__(schema)
-        self.model_name = model_name
+        self.model_name = model_name or DEFAULT_MODEL
         self.model_kwargs = model_kwargs
 
         # Initialize Gemini client

@@ -76,10 +76,8 @@ async def main() -> None:
     print()
 
     # Initialize the extractor with the Recipe schema
-    extractor = GeminiExtractor(
-        schema=Recipe,
-        model_name="gemini-2.0-flash-exp",
-    )
+    # Uses default model from config (can override via STRUCTURE_IT_MODEL env var)
+    extractor = GeminiExtractor(schema=Recipe)
 
     print("Input Text:")
     print("-" * 80)

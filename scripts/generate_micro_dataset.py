@@ -1,6 +1,6 @@
 """Generate 3 synthetic policy documents for Phase 1 testing.
 
-Creates a micro-dataset of realistic policy PDFs for validating extraction:
+Creates a micro-dataset of realistic policy documents for validating extraction:
 - Financial: Expense Reimbursement Policy (simple)
 - IT Security: Access Control Policy (medium)
 - HR: Code of Conduct (simple)
@@ -15,142 +15,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from google import genai
-from google.genai import types
-
-
-class PolicyGenerator:
-    """Generate realistic synthetic policy documents."""
-
-    def __init__(self, api_key: str | None = None) -> None:
-        """Initialize the policy generator.
-
-        Args:
-            api_key: Google API key (if not set via environment).
-        """
-        if api_key:
-            self.client = genai.Client(api_key=api_key)
-        else:
-            self.client = genai.Client()
-
-    async def generate_policy_text(
-        self,
-        policy_id: str,
-        policy_title: str,
-        policy_type: str,
-        complexity: str = "simple",
-    ) -> str:
-        """Generate policy document text using Gemini.
-
-        Args:
-            policy_id: Policy identifier.
-            policy_title: Policy name.
-            policy_type: Type (Financial, IT Security, HR).
-            complexity: simple/medium/complex.
-
-        Returns:
-            Generated policy text in markdown format.
-        """
-        complexity_guidance = {
-            "simple": "5-10 clear requirements, 2-3 pages, straightforward language",
-            "medium": "10-15 requirements with some conditions, 5-7 pages, professional language",
-            "complex": "20+ requirements with nested conditions, 10-15 pages, technical language",
-        }
-
-        prompt = f"""Generate a realistic {policy_type} policy document for a mid-sized technology company.
-
-Title: {policy_title}
-Policy ID: {policy_id}
-Version: 1.0
-Effective Date: 2024-01-15
-Policy Owner: {self._get_policy_owner(policy_type)}
-
-Complexity: {complexity} - {complexity_guidance.get(complexity, complexity_guidance["simple"])}
-
-The policy should include:
-
-1. HEADER SECTION
-   - Policy ID, Version, Effective Date
-   - Policy Owner and Approver
-   - Review Date
-
-2. PURPOSE
-   - Clear 2-3 sentence statement of why this policy exists
-
-3. SCOPE
-   - Who and what this policy applies to
-
-4. DEFINITIONS (5-8 key terms)
-   - Define technical terms used in the policy
-
-5. POLICY STATEMENTS ({complexity_guidance.get(complexity, "5-10")} requirements)
-   Use clear obligation language:
-   - "must", "shall", "will" for mandatory requirements
-   - "should", "recommended" for recommended practices
-   - "prohibited", "must not" for prohibitions
-
-   For each requirement:
-   - State clearly who it applies to (roles, departments)
-   - Include specific thresholds or limits where relevant
-   - Add conditions when applicable ("when amount exceeds $X")
-   - Note exceptions if appropriate ("except for emergency situations")
-   - Reference regulations where relevant (SOX, GDPR, etc.)
-
-6. PROCEDURES (2-3 procedures)
-   - Step-by-step processes for common scenarios
-   - Clear numbering and structure
-
-7. ROLES AND RESPONSIBILITIES
-   - Who does what under this policy
-
-8. COMPLIANCE AND ENFORCEMENT
-   - How compliance is verified
-   - Consequences of non-compliance
-
-9. RELATED DOCUMENTS
-   - List 2-3 related policies
-
-10. VERSION HISTORY
-    - Table showing version changes
-
-Make it professionally written and realistic. Use specific examples and thresholds.
-Focus on creating well-structured, clear requirements that an LLM can extract.
-
-Format as markdown with proper headings and structure. Use tables where appropriate.
-"""
-
-        response = await asyncio.to_thread(
-            self.client.models.generate_content,
-            model="gemini-flash-lite-latest",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=1.2,
-            ),
-        )
-
-        return response.text
-
-    def _get_policy_owner(self, policy_type: str) -> str:
-        """Get appropriate policy owner for policy type."""
-        owners = {
-            "Financial": "Chief Financial Officer (CFO)",
-            "IT Security": "Chief Information Security Officer (CISO)",
-            "HR": "Chief Human Resources Officer (CHRO)",
-            "Legal": "General Counsel",
-            "Compliance": "Chief Compliance Officer (CCO)",
-        }
-        return owners.get(policy_type, "Chief Operating Officer (COO)")
-
-    def save_as_markdown(self, content: str, output_path: Path) -> None:
-        """Save policy content as markdown file.
-
-        Args:
-            content: Policy text content.
-            output_path: Output file path.
-        """
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
-            f.write(content)
+from structure_it.generators import PolicyGenerator
 
 
 async def generate_micro_dataset() -> None:
@@ -195,11 +60,11 @@ async def generate_micro_dataset() -> None:
     ]
 
     # Create output directory
-    output_dir = Path("sample_policies/micro_dataset")
+    output_dir = Path("data/sample_policies/micro_dataset")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Initialize generator
-    generator = PolicyGenerator()
+    # Initialize generator with lite model for speed and cost
+    generator = PolicyGenerator(model_name="gemini-flash-lite-latest", temperature=1.2)
 
     # Generate each policy
     metadata_list = []
@@ -210,11 +75,12 @@ async def generate_micro_dataset() -> None:
 
         try:
             # Generate policy text
-            content = await generator.generate_policy_text(
+            content = await generator.generate_policy(
                 policy_id=policy["policy_id"],
                 policy_title=policy["policy_title"],
                 policy_type=policy["policy_type"],
                 complexity=policy["complexity"],
+                version="1.0",
             )
 
             # Save markdown
@@ -263,7 +129,7 @@ async def generate_micro_dataset() -> None:
     print("2. Test extraction with:")
     print("   uv run python examples/extract_policy_requirements.py \\")
     print(f"     {output_dir}/FIN-001_expense_reimbursement.md \\")
-    print("     --metadata sample_policies/micro_dataset/metadata.json")
+    print("     --metadata data/sample_policies/micro_dataset/metadata.json")
     print()
 
 

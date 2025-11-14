@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 
 from markitdown import MarkItDown
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors import GeminiExtractor
 from structure_it.schemas.articles import WebArticle
 from structure_it.storage import DuckDBStorage, JSONStorage
@@ -77,10 +78,8 @@ async def main() -> None:
 
     # Step 2: Extract structured data
     print("Extracting structured article data...")
-    extractor = GeminiExtractor(
-        schema=WebArticle,
-        model_name="gemini-2.0-flash-exp",
-    )
+    # Uses default model from config (can override via STRUCTURE_IT_MODEL env var)
+    extractor = GeminiExtractor(schema=WebArticle)
 
     try:
         article = await extractor.extract(
@@ -134,7 +133,7 @@ async def main() -> None:
         structured_data=article.to_dict(),
         metadata={
             "extractor": "GeminiExtractor",
-            "model": "gemini-2.0-flash-exp",
+            "model": DEFAULT_MODEL,
             "markdown_length": len(markdown_content),
         },
     )
@@ -150,7 +149,7 @@ async def main() -> None:
         structured_data=article.to_dict(),
         metadata={
             "extractor": "GeminiExtractor",
-            "model": "gemini-2.0-flash-exp",
+            "model": DEFAULT_MODEL,
             "markdown_length": len(markdown_content),
         },
     )

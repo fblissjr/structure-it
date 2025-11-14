@@ -30,6 +30,7 @@ import os
 import sys
 from pathlib import Path
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors import PolicyRequirementsExtractor
 
 
@@ -147,8 +148,8 @@ async def main() -> None:
     )
     parser.add_argument(
         "--model",
-        default="gemini-2.5-flash-lite",
-        help="Gemini model to use (default: gemini-2.5-flash)",
+        default=None,
+        help=f"Gemini model to use (default from config: {DEFAULT_MODEL})",
     )
 
     args = parser.parse_args()
