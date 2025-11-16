@@ -1,14 +1,14 @@
-policy_id,policy_title,policy_type,policy_version,effective_date,filename,complexity,generated_at
-FIN-001,Expense Reimbursement Policy,Financial,1.2,2024-01-15,FIN-001_expense_reimbursement.md,simple,2025-11-13T13:51:54.710522
-FIN-002,Capital Expenditure Approval Policy,Financial,1.2,2024-01-15,FIN-002_capital_expenditure.md,medium,2025-11-13T13:51:54.710733
-FIN-003,Financial Authority Matrix and Approval Limits,Financial,1.2,2024-01-15,FIN-003_financial_authority_matrix.md,complex,2025-11-13T13:51:54.710736
-IT-001,Acceptable Use Policy,IT Security,1.2,2024-01-15,IT-001_acceptable_use.md,simple,2025-11-13T13:51:54.710738
-IT-002,Access Control and Identity Management Policy,IT Security,1.2,2024-01-15,IT-002_access_control.md,medium,2025-11-13T13:51:54.710740
-IT-003,Information Security and Data Protection Policy,IT Security,1.2,2024-01-15,IT-003_information_security.md,complex,2025-11-13T13:51:54.710741
-HR-001,Code of Conduct,HR,1.2,2024-01-15,HR-001_code_of_conduct.md,simple,2025-11-13T13:51:54.710743
-HR-002,Remote Work and Flexible Work Arrangements,HR,1.2,2024-01-15,HR-002_remote_work.md,medium,2025-11-13T13:51:54.710744
-HR-003,Performance Management and Employee Development,HR,1.2,2024-01-15,HR-003_performance_management.md,complex,2025-11-13T13:51:54.710746
-LEG-001,Conflict of Interest and Disclosure Policy,Legal,1.2,2024-01-15,LEG-001_conflict_of_interest.md,medium,2025-11-13T13:51:54.710747
-LEG-002,Records Retention and Document Management Policy,Legal,1.2,2024-01-15,LEG-002_records_retention.md,complex,2025-11-13T13:51:54.710748
-COMP-001,Privacy and Data Protection Compliance,Compliance,1.2,2024-01-15,COMP-001_privacy_compliance.md,medium,2025-11-13T13:51:54.710750
-COMP-002,Anti-Corruption and Ethical Business Practices,Compliance,1.2,2024-01-15,COMP-002_anti_corruption.md,complex,2025-11-13T13:51:54.710751
+policy_id,policy_title,policy_type,policy_version,effective_date,filename,complexity,character_count,generated_at,model,temperature
+FIN-001,Expense Reimbursement Policy,Financial,1.2,2024-01-15,FIN-001_expense_reimbursement.md,simple,11623,2025-11-13T13:17:38.782990,gemini-flash-lite-latest,0.7999999999999999
+FIN-002,Capital Expenditure Approval Policy,Financial,1.2,2024-01-15,FIN-002_capital_expenditure.md,medium,14276,2025-11-13T13:17:51.316613,gemini-flash-lite-latest,0.8999999999999999
+FIN-003,Financial Authority Matrix and Approval Limits,Financial,1.2,2024-01-15,FIN-003_financial_authority_matrix.md,complex,20836,2025-11-13T13:18:10.332623,gemini-flash-lite-latest,0.7
+IT-001,Acceptable Use Policy,IT Security,1.2,2024-01-15,IT-001_acceptable_use.md,simple,9805,2025-11-13T13:18:18.216423,gemini-flash-lite-latest,0.7999999999999999
+IT-002,Access Control and Identity Management Policy,IT Security,1.2,2024-01-15,IT-002_access_control.md,medium,15428,2025-11-13T13:18:30.196100,gemini-flash-lite-latest,0.8999999999999999
+IT-003,Information Security and Data Protection Policy,IT Security,1.2,2024-01-15,IT-003_information_security.md,complex,18348,2025-11-13T13:18:44.443219,gemini-flash-lite-latest,0.7
+HR-001,Code of Conduct,HR,1.2,2024-01-15,HR-001_code_of_conduct.md,simple,10969,2025-11-13T13:18:54.313075,gemini-flash-lite-latest,0.7999999999999999
+HR-002,Remote Work and Flexible Work Arrangements,HR,1.2,2024-01-15,HR-002_remote_work.md,medium,14458,2025-11-13T13:19:07.578344,gemini-flash-lite-latest,0.8999999999999999
+HR-003,Performance Management and Employee Development,HR,1.2,2024-01-15,HR-003_performance_management.md,complex,19952,2025-11-13T13:19:24.392550,gemini-flash-lite-latest,0.7
+LEG-001,Conflict of Interest and Disclosure Policy,Legal,1.2,2024-01-15,LEG-001_conflict_of_interest.md,medium,15731,2025-11-13T13:19:37.586839,gemini-flash-lite-latest,0.7999999999999999
+LEG-002,Records Retention and Document Management Policy,Legal,1.2,2024-01-15,LEG-002_records_retention.md,complex,19686,2025-11-13T13:19:53.466368,gemini-flash-lite-latest,0.8999999999999999
+COMP-001,Privacy and Data Protection Compliance,Compliance,1.2,2024-01-15,COMP-001_privacy_compliance.md,medium,14535,2025-11-13T13:20:06.569759,gemini-flash-lite-latest,0.7
+COMP-002,Anti-Corruption and Ethical Business Practices,Compliance,1.2,2024-01-15,COMP-002_anti_corruption.md,complex,20288,2025-11-13T13:20:23.674241,gemini-flash-lite-latest,0.7999999999999999

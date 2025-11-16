@@ -7,7 +7,10 @@
     "effective_date": "2024-01-15",
     "filename": "FIN-001_expense_reimbursement.md",
     "complexity": "simple",
-    "generated_at": "2025-11-13T13:51:54.710522"
+    "character_count": 11623,
+    "generated_at": "2025-11-13T13:17:38.782990",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7999999999999999
   },
   {
     "policy_id": "FIN-002",
@@ -17,7 +20,10 @@
     "effective_date": "2024-01-15",
     "filename": "FIN-002_capital_expenditure.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:54.710733"
+    "character_count": 14276,
+    "generated_at": "2025-11-13T13:17:51.316613",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.8999999999999999
   },
   {
     "policy_id": "FIN-003",
@@ -27,7 +33,10 @@
     "effective_date": "2024-01-15",
     "filename": "FIN-003_financial_authority_matrix.md",
     "complexity": "complex",
-    "generated_at": "2025-11-13T13:51:54.710736"
+    "character_count": 20836,
+    "generated_at": "2025-11-13T13:18:10.332623",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7
   },
   {
     "policy_id": "IT-001",
@@ -37,7 +46,10 @@
     "effective_date": "2024-01-15",
     "filename": "IT-001_acceptable_use.md",
     "complexity": "simple",
-    "generated_at": "2025-11-13T13:51:54.710738"
+    "character_count": 9805,
+    "generated_at": "2025-11-13T13:18:18.216423",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7999999999999999
   },
   {
     "policy_id": "IT-002",
@@ -47,7 +59,10 @@
     "effective_date": "2024-01-15",
     "filename": "IT-002_access_control.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:54.710740"
+    "character_count": 15428,
+    "generated_at": "2025-11-13T13:18:30.196100",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.8999999999999999
   },
   {
     "policy_id": "IT-003",
@@ -57,7 +72,10 @@
     "effective_date": "2024-01-15",
     "filename": "IT-003_information_security.md",
     "complexity": "complex",
-    "generated_at": "2025-11-13T13:51:54.710741"
+    "character_count": 18348,
+    "generated_at": "2025-11-13T13:18:44.443219",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7
   },
   {
     "policy_id": "HR-001",
@@ -67,7 +85,10 @@
     "effective_date": "2024-01-15",
     "filename": "HR-001_code_of_conduct.md",
     "complexity": "simple",
-    "generated_at": "2025-11-13T13:51:54.710743"
+    "character_count": 10969,
+    "generated_at": "2025-11-13T13:18:54.313075",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7999999999999999
   },
   {
     "policy_id": "HR-002",
@@ -77,7 +98,10 @@
     "effective_date": "2024-01-15",
     "filename": "HR-002_remote_work.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:54.710744"
+    "character_count": 14458,
+    "generated_at": "2025-11-13T13:19:07.578344",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.8999999999999999
   },
   {
     "policy_id": "HR-003",
@@ -87,7 +111,10 @@
     "effective_date": "2024-01-15",
     "filename": "HR-003_performance_management.md",
     "complexity": "complex",
-    "generated_at": "2025-11-13T13:51:54.710746"
+    "character_count": 19952,
+    "generated_at": "2025-11-13T13:19:24.392550",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7
   },
   {
     "policy_id": "LEG-001",
@@ -97,7 +124,10 @@
     "effective_date": "2024-01-15",
     "filename": "LEG-001_conflict_of_interest.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:54.710747"
+    "character_count": 15731,
+    "generated_at": "2025-11-13T13:19:37.586839",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7999999999999999
   },
   {
     "policy_id": "LEG-002",
@@ -107,7 +137,10 @@
     "effective_date": "2024-01-15",
     "filename": "LEG-002_records_retention.md",
     "complexity": "complex",
-    "generated_at": "2025-11-13T13:51:54.710748"
+    "character_count": 19686,
+    "generated_at": "2025-11-13T13:19:53.466368",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.8999999999999999
   },
   {
     "policy_id": "COMP-001",
@@ -117,7 +150,10 @@
     "effective_date": "2024-01-15",
     "filename": "COMP-001_privacy_compliance.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:54.710750"
+    "character_count": 14535,
+    "generated_at": "2025-11-13T13:20:06.569759",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7
   },
   {
     "policy_id": "COMP-002",
@@ -127,6 +163,9 @@
     "effective_date": "2024-01-15",
     "filename": "COMP-002_anti_corruption.md",
     "complexity": "complex",
-    "generated_at": "2025-11-13T13:51:54.710751"
+    "character_count": 20288,
+    "generated_at": "2025-11-13T13:20:23.674241",
+    "model": "gemini-flash-lite-latest",
+    "temperature": 0.7999999999999999
   }
 ]

@@ -7,7 +7,7 @@
     "effective_date": "2024-01-15",
     "filename": "FIN-001_expense_reimbursement.md",
     "complexity": "simple",
-    "generated_at": "2025-11-13T13:51:58.273126"
+    "generated_at": "2025-11-13T13:16:55.143119"
   },
   {
     "policy_id": "IT-001",
@@ -17,7 +17,7 @@
     "effective_date": "2024-01-15",
     "filename": "IT-001_access_control.md",
     "complexity": "medium",
-    "generated_at": "2025-11-13T13:51:58.273335"
+    "generated_at": "2025-11-13T13:17:04.294831"
   },
   {
     "policy_id": "HR-001",
@@ -27,6 +27,6 @@
     "effective_date": "2024-01-15",
     "filename": "HR-001_code_of_conduct.md",
     "complexity": "simple",
-    "generated_at": "2025-11-13T13:51:58.273337"
+    "generated_at": "2025-11-13T13:17:12.531239"
   }
 ]
