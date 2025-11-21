@@ -66,7 +66,16 @@ class DuckDBStorage(BaseStorage):
         structured_data: dict[str, Any],
         metadata: dict[str, Any] | None = None,
     ) -> None:
-        """Store an entity in DuckDB."""
+        """Store an entity in DuckDB.
+
+        Args:
+            entity_id: Unique identifier.
+            source_type: Type of source.
+            source_url: Source URL.
+            raw_content: Original content.
+            structured_data: Extracted data.
+            metadata: Additional metadata.
+        """
         self.conn.execute(
             """
             INSERT OR REPLACE INTO extracted_entities
@@ -84,7 +93,14 @@ class DuckDBStorage(BaseStorage):
         )
 
     async def get_entity(self, entity_id: str) -> StoredEntity | None:
-        """Retrieve an entity from DuckDB."""
+        """Retrieve an entity from DuckDB.
+
+        Args:
+            entity_id: Unique identifier.
+
+        Returns:
+            StoredEntity if found, None otherwise.
+        """
         result = self.conn.execute(
             """
             SELECT entity_id, source_type, source_url, raw_content,
@@ -114,7 +130,16 @@ class DuckDBStorage(BaseStorage):
         limit: int = 100,
         offset: int = 0,
     ) -> list[StoredEntity]:
-        """Query entities with optional filtering."""
+        """Query entities with optional filtering.
+
+        Args:
+            source_type: Filter by source type (optional).
+            limit: Maximum number of results.
+            offset: Number of results to skip.
+
+        Returns:
+            List of matching entities.
+        """
         if source_type:
             query = """
                 SELECT entity_id, source_type, source_url, raw_content,
@@ -151,14 +176,28 @@ class DuckDBStorage(BaseStorage):
         ]
 
     async def delete_entity(self, entity_id: str) -> bool:
-        """Delete an entity from DuckDB."""
+        """Delete an entity from DuckDB.
+
+        Args:
+            entity_id: Unique identifier.
+
+        Returns:
+            True if deleted, False if not found.
+        """
         result = self.conn.execute(
             "DELETE FROM extracted_entities WHERE entity_id = ?", [entity_id]
         )
         return result.fetchone()[0] > 0
 
     async def count_entities(self, source_type: str | None = None) -> int:
-        """Count entities in DuckDB."""
+        """Count entities in DuckDB.
+
+        Args:
+            source_type: Filter by source type (optional).
+
+        Returns:
+            Number of matching entities.
+        """
         if source_type:
             result = self.conn.execute(
                 "SELECT COUNT(*) FROM extracted_entities WHERE source_type = ?",

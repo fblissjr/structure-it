@@ -4,7 +4,15 @@ from structure_it.schemas.base import BaseSchema
 
 
 class Parameter(BaseSchema):
-    """Function/method parameter."""
+    """Function/method parameter.
+
+    Attributes:
+        name: Parameter name.
+        type: Parameter type.
+        description: Parameter description.
+        default_value: Default value of the parameter.
+        required: Boolean indicating if parameter is required.
+    """
 
     name: str
     type: str | None = None
@@ -14,14 +22,25 @@ class Parameter(BaseSchema):
 
 
 class ReturnValue(BaseSchema):
-    """Function/method return value."""
+    """Function/method return value.
+
+    Attributes:
+        type: Return type.
+        description: Description of the return value.
+    """
 
     type: str | None = None
     description: str | None = None
 
 
 class Example(BaseSchema):
-    """Code example."""
+    """Code example.
+
+    Attributes:
+        code: Code snippet.
+        description: Description of the example.
+        language: Programming language (default: "python").
+    """
 
     code: str
     description: str | None = None
@@ -29,7 +48,21 @@ class Example(BaseSchema):
 
 
 class FunctionDoc(BaseSchema):
-    """Function or method documentation."""
+    """Function or method documentation.
+
+    Attributes:
+        name: Function name.
+        signature: Function signature.
+        description: Function description.
+        parameters: List of parameters.
+        returns: Return value documentation.
+        raises: List of exceptions raised.
+        examples: List of usage examples.
+        notes: Additional notes.
+        see_also: References to related functions/classes.
+        deprecated: Boolean indicating if function is deprecated.
+        deprecation_message: Message explaining deprecation.
+    """
 
     name: str
     signature: str
@@ -45,7 +78,17 @@ class FunctionDoc(BaseSchema):
 
 
 class ClassDoc(BaseSchema):
-    """Class documentation."""
+    """Class documentation.
+
+    Attributes:
+        name: Class name.
+        description: Class description.
+        attributes: List of class attributes.
+        methods: List of methods.
+        inherits_from: List of parent classes.
+        examples: List of usage examples.
+        notes: Additional notes.
+    """
 
     name: str
     description: str
@@ -57,7 +100,18 @@ class ClassDoc(BaseSchema):
 
 
 class ModuleDoc(BaseSchema):
-    """Module/package documentation."""
+    """Module/package documentation.
+
+    Attributes:
+        name: Module name.
+        description: Module description.
+        functions: List of functions in module.
+        classes: List of classes in module.
+        constants: List of constants in module.
+        examples: List of usage examples.
+        dependencies: List of module dependencies.
+        exports: List of exported symbols.
+    """
 
     name: str
     description: str
@@ -70,7 +124,18 @@ class ModuleDoc(BaseSchema):
 
 
 class CodeDocumentation(BaseSchema):
-    """Complete code documentation extraction."""
+    """Complete code documentation extraction.
+
+    Attributes:
+        module: Module-level documentation.
+        functions: List of top-level functions.
+        classes: List of top-level classes.
+        language: Programming language.
+        file_path: Path to the source file.
+        repository_url: URL to the repository.
+        version: Code version.
+        license: License information.
+    """
 
     module: ModuleDoc | None = None
     functions: list[FunctionDoc] = []

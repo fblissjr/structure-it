@@ -15,7 +15,18 @@ from structure_it.schemas import BaseSchema
 
 
 class Recipe(BaseSchema):
-    """Schema for structured recipe data."""
+    """Schema for structured recipe data.
+
+    Attributes:
+        name: Name of the recipe.
+        description: Brief description of the recipe.
+        prep_time_minutes: Preparation time in minutes.
+        cook_time_minutes: Cooking time in minutes.
+        servings: Number of servings.
+        ingredients: List of ingredients.
+        instructions: List of cooking instructions.
+        tags: List of tags.
+    """
 
     name: str
     description: str | None = None

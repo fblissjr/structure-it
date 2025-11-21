@@ -21,7 +21,7 @@ class TestPolicyRequirementsExtractor:
     def test_init_default_model(self):
         """Test initialization with default model."""
         extractor = PolicyRequirementsExtractor()
-        assert extractor.model_name == "gemini-2.0-flash-exp"
+        assert extractor.model_name == "gemini-2.5-flash"
 
     def test_init_custom_model(self):
         """Test initialization with custom model."""
@@ -123,8 +123,8 @@ class TestPolicyRequirementsExtractor:
         """Test PDF conversion with non-existent file."""
         extractor = PolicyRequirementsExtractor()
 
-        with pytest.raises(ValueError, match="PDF file not found"):
-            extractor._convert_pdf_to_markdown("nonexistent.pdf")
+        with pytest.raises(ValueError, match="File not found"):
+            extractor._convert_to_markdown("nonexistent.pdf")
 
     @pytest.mark.asyncio
     @patch("structure_it.extractors.policy_extractor.MarkItDown")
@@ -227,7 +227,7 @@ class TestPolicyRequirementsExtractor:
             # Extraction timestamp should be set
             assert result.extraction_timestamp is not None
             # Model should be set
-            assert result.model_used == "gemini-2.0-flash-exp"
+            assert result.model_used == "gemini-2.5-flash"
 
         finally:
             # Cleanup

@@ -8,7 +8,17 @@ from pydantic import BaseModel
 
 
 class StoredEntity(BaseModel):
-    """Representation of a stored entity."""
+    """Representation of a stored entity.
+
+    Attributes:
+        entity_id: Unique identifier for the entity.
+        source_type: Type of source (e.g., 'article', 'paper').
+        source_url: Source URL or file path.
+        raw_content: Original unstructured content.
+        structured_data: Extracted structured data.
+        metadata: Additional metadata.
+        created_at: Timestamp of creation.
+    """
 
     entity_id: str
     source_type: str
