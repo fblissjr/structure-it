@@ -21,10 +21,8 @@ def initialize_database(con):
     con.execute("DROP TABLE IF EXISTS embedding_models;")
     con.execute("DROP SEQUENCE IF EXISTS model_id_seq;")
 
-    # **FIX:** Create a SEQUENCE to auto-increment the model_id
     con.execute("CREATE SEQUENCE model_id_seq START 1;")
 
-    # **FIX:** Set the DEFAULT value for model_id using the sequence
     con.execute("""
         CREATE TABLE embedding_models (
             model_id INTEGER PRIMARY KEY DEFAULT nextval('model_id_seq'),
@@ -63,7 +61,7 @@ def load_single_turn_edits(con):
             edit_category VARCHAR,
             prompt_summary VARCHAR,
             source_file VARCHAR,
-            prompt_embedding FLOAT[],
+            prompt_embedding DOUBLE[], -- **FIX: Changed FLOAT[] to DOUBLE[]**
             embedding_model_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP
@@ -75,10 +73,10 @@ def load_single_turn_edits(con):
 
 def load_multi_turn_conversations(con):
     print(f"Loading and normalizing '{MULTI_TURN_FILE}'...")
-    # ... (rest of the function is correct, no changes needed here)
     sessions_data = []
     steps_data = []
     with open(MULTI_TURN_FILE, "r") as f:
+        # ... (rest of data processing is unchanged)
         for session_id, line in enumerate(f, 1):
             data = json.loads(line)
             original_url = next(
@@ -93,7 +91,6 @@ def load_multi_turn_conversations(con):
                 (item["url"] for item in data["files"] if item["id"] == "final_image"),
                 None,
             )
-
             sessions_data.append(
                 {
                     "session_id": session_id,
@@ -103,7 +100,6 @@ def load_multi_turn_conversations(con):
                     "source_file": MULTI_TURN_FILE,
                 }
             )
-
             for turn_number, prompt in enumerate(data["metadata_edit_turn_prompts"], 1):
                 turn_image_path = next(
                     (
@@ -143,7 +139,7 @@ def load_multi_turn_conversations(con):
             turn_number INTEGER,
             prompt VARCHAR,
             output_image_path VARCHAR,
-            prompt_embedding FLOAT[],
+            prompt_embedding DOUBLE[], -- **FIX: Changed FLOAT[] to DOUBLE[]**
             embedding_model_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP,
@@ -156,7 +152,6 @@ def load_multi_turn_conversations(con):
 
 def load_edit_preferences(con):
     print(f"Loading '{PREFERENCE_FILE}'...")
-    # ... (rest of the function is correct, no changes needed here)
     df = pd.read_json(PREFERENCE_FILE, lines=True)
     df.rename(
         columns={
@@ -183,7 +178,7 @@ def load_edit_preferences(con):
             input_image_url VARCHAR,
             prompt_summary VARCHAR,
             source_file VARCHAR,
-            prompt_embedding FLOAT[],
+            prompt_embedding DOUBLE[], -- **FIX: Changed FLOAT[] to DOUBLE[]**
             embedding_model_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP
