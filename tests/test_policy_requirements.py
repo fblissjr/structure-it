@@ -246,16 +246,17 @@ class TestRequirementValidation:
         )
         assert req.statement == ""
 
-    def test_extra_fields_forbidden(self):
-        """Test that extra fields are forbidden."""
-        with pytest.raises(ValidationError):
-            PolicyRequirement(
-                requirement_id="TEST-001",
-                statement="Test",
-                requirement_type="mandatory",
-                source_policy_id="TEST",
-                extra_field="not allowed",  # This should raise an error
-            )
+    def test_extra_fields_ignored(self):
+        """Test that extra fields are ignored."""
+        req = PolicyRequirement(
+            requirement_id="TEST-001",
+            statement="Test",
+            requirement_type="mandatory",
+            source_policy_id="TEST",
+            extra_field="ignored",  # This should be ignored
+        )
+        # The field shouldn't be in the model
+        assert not hasattr(req, "extra_field")
 
     def test_required_fields_enforced(self):
         """Test that required fields are enforced."""

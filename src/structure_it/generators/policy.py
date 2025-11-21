@@ -15,7 +15,14 @@ class PolicyGenerator(BaseGenerator):
     """
 
     def _get_policy_owner(self, policy_type: str) -> str:
-        """Get appropriate policy owner for policy type."""
+        """Get appropriate policy owner for policy type.
+
+        Args:
+            policy_type: Type of policy.
+
+        Returns:
+            Title of the policy owner.
+        """
         owners = {
             "Financial": "Chief Financial Officer (CFO)",
             "IT Security": "Chief Information Security Officer (CISO)",
@@ -26,7 +33,14 @@ class PolicyGenerator(BaseGenerator):
         return owners.get(policy_type, "Chief Operating Officer (COO)")
 
     def _get_approver(self, policy_type: str) -> str:
-        """Get appropriate approver for policy type."""
+        """Get appropriate approver for policy type.
+
+        Args:
+            policy_type: Type of policy.
+
+        Returns:
+            Title of the approver.
+        """
         approvers = {
             "Financial": "Audit Committee",
             "IT Security": "Chief Executive Officer (CEO)",
@@ -37,7 +51,14 @@ class PolicyGenerator(BaseGenerator):
         return approvers.get(policy_type, "Chief Executive Officer (CEO)")
 
     def _get_domain_specific_guidance(self, policy_type: str) -> str:
-        """Get domain-specific requirement guidance."""
+        """Get domain-specific requirement guidance.
+
+        Args:
+            policy_type: Type of policy.
+
+        Returns:
+            Guidance string for the generator prompt.
+        """
         guidance = {
             "Financial": """
    FINANCIAL SPECIFIC REQUIREMENTS:

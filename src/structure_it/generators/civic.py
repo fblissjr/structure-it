@@ -13,7 +13,14 @@ class CivicDocumentGenerator(BaseGenerator):
     """
 
     def _get_municipality_type(self, gov_type: str) -> str:
-        """Get appropriate municipality description."""
+        """Get appropriate municipality description.
+
+        Args:
+            gov_type: The type of government entity (township, village, city, county).
+
+        Returns:
+            The formal name for the governing body.
+        """
         types = {
             "township": "Township Board",
             "village": "Village Council",
@@ -95,7 +102,19 @@ class CivicDocumentGenerator(BaseGenerator):
         spec: dict,
         temperature: float | None,
     ) -> str:
-        """Generate a meeting agenda."""
+        """Generate a meeting agenda.
+
+        Args:
+            doc_id: Document ID.
+            municipality: Municipality name.
+            board_type: Governing board type.
+            meeting_date: Meeting date.
+            spec: Complexity specifications.
+            temperature: Generation temperature.
+
+        Returns:
+            Generated agenda text.
+        """
         prompt = f"""Generate a realistic municipal meeting agenda for {municipality} {board_type}.
 
 MEETING METADATA:
@@ -206,7 +225,19 @@ FORMAT: Output as well-structured markdown with:
         spec: dict,
         temperature: float | None,
     ) -> str:
-        """Generate meeting minutes."""
+        """Generate meeting minutes.
+
+        Args:
+            doc_id: Document ID.
+            municipality: Municipality name.
+            board_type: Governing board type.
+            meeting_date: Meeting date.
+            spec: Complexity specifications.
+            temperature: Generation temperature.
+
+        Returns:
+            Generated minutes text.
+        """
         prompt = f"""Generate realistic meeting minutes for {municipality} {board_type}.
 
 MEETING METADATA:
@@ -241,7 +272,19 @@ Follow proper meeting minutes format with:
         spec: dict,
         temperature: float | None,
     ) -> str:
-        """Generate a project proposal."""
+        """Generate a project proposal.
+
+        Args:
+            doc_id: Document ID.
+            municipality: Municipality name.
+            board_type: Governing board type.
+            meeting_date: Meeting date.
+            spec: Complexity specifications.
+            temperature: Generation temperature.
+
+        Returns:
+            Generated proposal text.
+        """
         prompt = f"""Generate a realistic municipal project proposal for {municipality}.
 
 PROPOSAL METADATA:
@@ -274,7 +317,19 @@ Use specific numbers, costs, and timelines. Make it realistic for a small munici
         spec: dict,
         temperature: float | None,
     ) -> str:
-        """Generate a resolution document."""
+        """Generate a resolution document.
+
+        Args:
+            doc_id: Document ID.
+            municipality: Municipality name.
+            board_type: Governing board type.
+            meeting_date: Meeting date.
+            spec: Complexity specifications.
+            temperature: Generation temperature.
+
+        Returns:
+            Generated resolution text.
+        """
         prompt = f"""Generate a realistic municipal resolution for {municipality} {board_type}.
 
 RESOLUTION METADATA:

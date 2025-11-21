@@ -25,7 +25,14 @@ class JSONStorage(BaseStorage):
         self.base_path.mkdir(parents=True, exist_ok=True)
 
     def _entity_path(self, entity_id: str) -> Path:
-        """Get file path for an entity."""
+        """Get file path for an entity.
+
+        Args:
+            entity_id: Unique identifier.
+
+        Returns:
+            Path to the JSON file.
+        """
         # Use first 2 chars of hash for subdirectory (sharding)
         subdir = self.base_path / entity_id[:2]
         subdir.mkdir(exist_ok=True)
@@ -40,7 +47,16 @@ class JSONStorage(BaseStorage):
         structured_data: dict[str, Any],
         metadata: dict[str, Any] | None = None,
     ) -> None:
-        """Store an entity as a JSON file."""
+        """Store an entity as a JSON file.
+
+        Args:
+            entity_id: Unique identifier.
+            source_type: Type of source.
+            source_url: Source URL.
+            raw_content: Original content.
+            structured_data: Extracted data.
+            metadata: Additional metadata.
+        """
         entity_data = {
             "entity_id": entity_id,
             "source_type": source_type,
@@ -56,7 +72,14 @@ class JSONStorage(BaseStorage):
             json.dump(entity_data, f, indent=2)
 
     async def get_entity(self, entity_id: str) -> StoredEntity | None:
-        """Retrieve an entity from JSON file."""
+        """Retrieve an entity from JSON file.
+
+        Args:
+            entity_id: Unique identifier.
+
+        Returns:
+            StoredEntity if found, None otherwise.
+        """
         path = self._entity_path(entity_id)
 
         if not path.exists():
@@ -73,7 +96,16 @@ class JSONStorage(BaseStorage):
         limit: int = 100,
         offset: int = 0,
     ) -> list[StoredEntity]:
-        """Query entities by scanning JSON files."""
+        """Query entities by scanning JSON files.
+
+        Args:
+            source_type: Filter by source type (optional).
+            limit: Maximum number of results.
+            offset: Number of results to skip.
+
+        Returns:
+            List of matching entities.
+        """
         entities: list[StoredEntity] = []
 
         # Scan all JSON files
@@ -94,7 +126,14 @@ class JSONStorage(BaseStorage):
         return entities[offset : offset + limit]
 
     async def delete_entity(self, entity_id: str) -> bool:
-        """Delete an entity JSON file."""
+        """Delete an entity JSON file.
+
+        Args:
+            entity_id: Unique identifier.
+
+        Returns:
+            True if deleted, False if not found.
+        """
         path = self._entity_path(entity_id)
 
         if not path.exists():
@@ -104,7 +143,14 @@ class JSONStorage(BaseStorage):
         return True
 
     async def count_entities(self, source_type: str | None = None) -> int:
-        """Count entities by scanning JSON files."""
+        """Count entities by scanning JSON files.
+
+        Args:
+            source_type: Filter by source type (optional).
+
+        Returns:
+            Number of matching entities.
+        """
         count = 0
 
         for json_file in self.base_path.rglob("*.json"):

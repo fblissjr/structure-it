@@ -13,7 +13,14 @@ class ArxivGenerator(BaseGenerator):
     """
 
     def _get_arxiv_category(self, focus_area: str) -> str:
-        """Get appropriate ArXiv category for focus area."""
+        """Get appropriate ArXiv category for focus area.
+
+        Args:
+            focus_area: The research focus area.
+
+        Returns:
+            The corresponding ArXiv category code.
+        """
         categories = {
             "machine_learning": "cs.LG",
             "computer_vision": "cs.CV",
@@ -157,7 +164,14 @@ FORMAT: Output as well-structured markdown with:
         return await self.generate_text(prompt, temperature=temperature)
 
     def _get_focus_area_guidance(self, focus_area: str) -> str:
-        """Get focus area-specific guidance."""
+        """Get focus area-specific guidance.
+
+        Args:
+            focus_area: The research focus area.
+
+        Returns:
+            Guidance string for the generator prompt.
+        """
         guidance = {
             "machine_learning": """
    - Discuss model architecture, training procedures, optimization

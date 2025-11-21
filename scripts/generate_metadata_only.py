@@ -115,6 +115,9 @@ def generate_micro_metadata(scan_existing: bool = False):
 
     Args:
         scan_existing: If True, scan for existing files and use actual data.
+
+    Returns:
+        List of policy metadata.
     """
     # Create output directory
     output_dir = Path("data/sample_policies/micro_dataset")
@@ -192,6 +195,9 @@ def generate_full_metadata(scan_existing: bool = False):
 
     Args:
         scan_existing: If True, scan for existing files and use actual data.
+
+    Returns:
+        List of policy metadata.
     """
     # Create output directory
     output_dir = Path("data/sample_policies/full_dataset")
