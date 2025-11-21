@@ -39,9 +39,7 @@ def get_or_create_model_entry(con, model, model_name_arg: str) -> int:
         raise RuntimeError(f"Failed to insert or retrieve model_id for {model_name}")
 
     model_id = result[0]
-    print(
-        f"✅ Using Model ID: {model_id} for '{model_name}' (Dimension: {embedding_dim})"
-    )
+    print(f"Using Model ID: {model_id} for '{model_name}' (Dimension: {embedding_dim})")
     return model_id
 
 
@@ -60,9 +58,7 @@ def add_embeddings_to_table(
         ).fetchdf()
         print(f"Found {len(df)} rows to process.")
     except duckdb.CatalogException:
-        print(
-            f"⚠️ Warning: Table '{table_name}' or column '{text_column}' not found. Skipping."
-        )
+        print(f"⚠️ Warning: Table '{table_name}' or column '{text_column}' not found. Skipping.")
         return
 
     if df.empty or df[text_column].isnull().all():
@@ -101,7 +97,7 @@ def add_embeddings_to_table(
     )
 
     con.unregister("temp_embeddings_df")
-    print(f"✅ Successfully updated '{table_name}' with embeddings.")
+    print(f"Successfully updated '{table_name}' with embeddings.")
 
 
 def main():
@@ -140,10 +136,10 @@ def main():
 
     if torch.backends.mps.is_available():
         device = "mps"
-        print("✅ MPS (Apple Silicon GPU) is available. Using for acceleration.")
+        print("MPS (Apple Silicon GPU) is available. Using for acceleration.")
     else:
         device = "cpu"
-        print("⚠️ MPS not available. Running on CPU (this will be slower).")
+        print("MPS not available. Running on CPU (this will be slower).")
 
     print(f"Loading local model via PyLate: '{args.model_name}'...")
     model = models.ColBERT(model_name_or_path=args.model_name, device=device)

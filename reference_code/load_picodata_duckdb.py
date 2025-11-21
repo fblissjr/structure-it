@@ -32,7 +32,7 @@ def initialize_database(con):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
-    print("✅ Table 'embedding_models' created with auto-incrementing ID.")
+    print("Table 'embedding_models' created with auto-incrementing ID.")
 
 
 def load_single_turn_edits(con):
@@ -80,11 +80,7 @@ def load_multi_turn_conversations(con):
         for session_id, line in enumerate(f, 1):
             data = json.loads(line)
             original_url = next(
-                (
-                    item["url"]
-                    for item in data["files"]
-                    if item["id"] == "original_input_image"
-                ),
+                (item["url"] for item in data["files"] if item["id"] == "original_input_image"),
                 None,
             )
             final_url = next(
@@ -131,7 +127,7 @@ def load_multi_turn_conversations(con):
         );
     """)
     con.execute("INSERT INTO multi_turn_sessions BY NAME FROM sessions_df;")
-    print(f"✅ Loaded {len(sessions_df)} records into 'multi_turn_sessions'.")
+    print(f"Loaded {len(sessions_df)} records into 'multi_turn_sessions'.")
 
     con.execute("""
         CREATE TABLE multi_turn_steps (
@@ -185,7 +181,7 @@ def load_edit_preferences(con):
         );
     """)
     con.execute("INSERT INTO edit_preferences BY NAME FROM df;")
-    print(f"✅ Loaded {len(df)} records into 'edit_preferences'.")
+    print(f"Loaded {len(df)} records into 'edit_preferences'.")
 
 
 def main():
