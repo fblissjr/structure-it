@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-11-24
+
+### Added
+
+**Core Infrastructure**:
+- Scrapy framework integration for robust data collection.
+- `tenacity` library for resilient network requests with exponential backoff.
+
+**Data Modeling & Storage**:
+- **Dimensional Context Model (Star Schema)** implementation (`StarSchemaStorage`):
+    - New SQL schema (`dim_documents`, `fact_items`, `rel_links`, `audit_document_changes`).
+    - Pydantic model "shredding" into atomic facts.
+    - Change Data Capture (CDC) based on content hashing and versioning.
+    - Audit trail for document changes (`audit_document_changes`).
+
+**Civic Data Extraction**:
+- **`CivicMeeting` Schema**: Pydantic model for structured local government meeting data (agendas, minutes, votes, agenda items).
+- **CivicPlus Scrapy Spider**:
+    - Ported `civic-scraper`'s parsing logic into a dedicated Scrapy spider (`CivicPlusSpider`).
+    - Configured with Scrapy's `AutoThrottle`, `DOWNLOAD_DELAY`, and custom `USER_AGENT` for "Gold Standard" politeness and safety.
+- **Scrapy Pipeline (`StructureItPipeline`)**:
+    - Integrates Scrapy item processing with `StarSchemaStorage` and `GeminiExtractor`.
+    - Implements CDC to avoid re-processing unchanged documents (saving LLM costs).
+    - Uses `MarkItDown` for PDF to Markdown conversion.
+    - Leverages `SafeSession` for resilient PDF downloads.
+
+
 ## [0.1.0]
 
 ### Added

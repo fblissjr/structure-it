@@ -5,6 +5,10 @@ Uses environment variables with sensible defaults.
 """
 
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if present
+load_dotenv()
 
 
 # Model Configuration

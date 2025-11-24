@@ -10,6 +10,12 @@ from structure_it.schemas.articles import (
     WebArticle,
 )
 from structure_it.schemas.base import BaseSchema
+from structure_it.schemas.civic import (
+    AgendaItem,
+    CivicMeeting,
+    RollCall,
+    Vote,
+)
 from structure_it.schemas.code_docs import (
     ClassDoc,
     CodeDocumentation,
@@ -52,6 +58,11 @@ __all__ = [
     "ArticleSection",
     "ArticleLink",
     "CodeBlock",
+    # Civic
+    "CivicMeeting",
+    "AgendaItem",
+    "Vote",
+    "RollCall",
     # Code Documentation
     "CodeDocumentation",
     "ModuleDoc",

@@ -41,7 +41,13 @@ class GeminiExtractor(BaseExtractor[TSchema]):
         if api_key:
             self.client = genai.Client(api_key=api_key)
         else:
-            self.client = genai.Client()
+            from structure_it.config import GOOGLE_API_KEY
+            if not GOOGLE_API_KEY:
+                raise ValueError(
+                    "GOOGLE_API_KEY is not set. Please set the GOOGLE_API_KEY "
+                    "environment variable or pass it to the extractor."
+                )
+            self.client = genai.Client(api_key=GOOGLE_API_KEY)
 
     async def extract(
         self,

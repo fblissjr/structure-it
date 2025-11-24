@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# Structure Studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Structure Studio is the **Operating System for your Structured Data**. It acts as a "Single Pane of Glass" UI for the `structure-it` research sandbox.
 
-Currently, two official plugins are available:
+Unlike traditional dashboards, Structure Studio is designed as a **Workspace Shell** that hosts multiple specialized "Apps" that share the same underlying data engine (Search, Graph, Inspector).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Architecture
 
-## React Compiler
+The UI is built with **React 19**, **Vite**, **Tailwind CSS**, and **D3.js**. It follows a modular architecture where the "Shell" (`App.tsx`) manages global state (active app, search query, selected item) and "Apps" are injected into the main stage.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### The Shell
 
-## Expanding the ESLint configuration
+*   **Sidebar (Global Nav)**: Switches between apps (Citizen Explorer, Compliance Monitor, Data Sources).
+*   **Global Search**: A "Spotlight-style" search bar that adapts its context based on the active app.
+*   **Atomic Inspector**: A global slide-over panel that provides a "Under the Hood" view (Raw JSON, Vector Embeddings) for *any* selected entity across *any* app.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### The Apps
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+#### 1. Citizen Explorer (`src/apps/CitizenExplorer`)
+*   **Focus**: Civic Data (Agendas, Minutes, Votes).
+*   **Core View**: **Topic Timeline**. A vertical stream of events and discussions, grouped by time.
+*   **Use Case**: "Show me the history of discussions about 'Zoning Variances' in 2024."
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+#### 2. Compliance Monitor (`src/apps/ComplianceMonitor`)
+*   **Focus**: Governance & Policy (Requirements, Regulations).
+*   **Core View**: **Extraction Workbench**. A split-screen view showing the source document alongside extracted structured data.
+*   **Secondary View**: **Constellation Graph**. A D3.js force-directed graph visualizing relationships between Policies, Requirements, and Roles.
+*   **Use Case**: "Extract all mandatory requirements from this PDF and visualize who they apply to."
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+#### 3. Data Sources (`src/apps/DataSources`)
+*   **Focus**: Ingestion & Management.
+*   **Core View**: **Ingest Dropzone**. A drag-and-drop interface for uploading files (PDF, MD, TXT) and selecting the target schema.
+
+## Development
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Building
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Build for production
+npm run build
 ```
+
+### Project Structure
+
+```
+ui/src/
+├── apps/                       # Distinct functional applications
+│   ├── CitizenExplorer/       # Civic data visualization
+│   ├── ComplianceMonitor/     # Policy extraction & analysis
+│   └── DataSources/           # Ingestion workflow
+├── components/
+│   ├── Layout/                # Shell components (Sidebar)
+│   ├── Shared/                # Reusable widgets (Inspector)
+│   ├── DocumentIngest.tsx     # Upload component
+│   ├── ExtractionWorkbench.tsx # Split-screen extraction view
+│   ├── PolicyGraph.tsx        # D3.js Graph visualization
+│   └── TopicTimeline.tsx      # Timeline visualization
+├── App.tsx                     # Main Shell & State Management
+└── main.tsx                    # Entry point
+```
+
+## Styling
+
+The UI uses a custom **Cyberpunk / Glassmorphism** theme defined in `tailwind.config.js`.
+
+*   **Colors**: `neon-blue`, `neon-purple`, `neon-pink`, `neon-green`.
+*   **Effects**: `glass-panel` (backdrop blur), `shadow-glow` (colored glows).
+*   **Fonts**: `Rajdhani` (UI), `Orbitron` (Headers), `Fira Code` (Data).

@@ -16,7 +16,6 @@ keywords = [
     "research"
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
@@ -30,11 +29,20 @@ dependencies = [
     "pydantic-settings>=2.0.0",
     "duckdb>=1.0.0",
     "python-dotenv>=1.0.0",
+    "markitdown>=0.0.1",
+    "civic-scraper>=0.1.0",
+    "tenacity>=8.0.0",
+    "scrapy>=2.13.4",
 ]
 
 [project.optional-dependencies]
 processors = [
     "genai-processors>=1.1.0",
+]
+server = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "python-multipart>=0.0.9",
 ]
 dev = [
     "pytest>=8.0.0",

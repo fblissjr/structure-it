@@ -1,11 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Expose Tailwind colors as CSS variables for D3.js */
+  --color-neon-blue: #00f3ff;
+  --color-neon-purple: #bc13fe;
+  --color-neon-pink: #ff00ff;
+  --color-neon-green: #0aff00;
+  --color-neon-yellow: #faff00;
+}
+
 body {
   @apply bg-slate-950 text-slate-300 font-sans antialiased;
+  background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 60%);
+  min-height: 100vh;
 }
 
 .glass-panel {
   @apply bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-xl;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
+
+.glass-panel-glow {
+  @apply bg-slate-900/80 backdrop-blur-xl border border-neon-blue/30 shadow-glow-blue;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-950;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full hover:bg-neon-blue/50 transition-colors;
+}
+
