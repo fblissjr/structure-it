@@ -2,15 +2,20 @@
 
 This is a port of the civic-scraper logic to the Scrapy framework,
 providing industry-standard safety, concurrency, and maintainability.
+
+All downloads (HTML pages AND PDFs) go through Scrapy's downloader,
+which respects DOWNLOAD_DELAY and CONCURRENT_REQUESTS settings.
 """
 
 import re
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import urljoin
 
 import scrapy
 
 from structure_it.config import get_scraper_settings
+from structure_it.utils.hashing import generate_entity_id
 
 
 class CivicPlusSpider(scrapy.Spider):
@@ -126,12 +131,97 @@ class CivicPlusSpider(scrapy.Spider):
 
                     full_url = urljoin(self.base_url, href)
 
-                    yield {
-                        "source_type": "civic_meeting",
-                        "committee_name": committee_name,
-                        "meeting_date": meeting_date,
-                        "title": meeting_title,
-                        "asset_type": asset_type,
-                        "url": full_url,
-                        "scraped_at": datetime.now().isoformat(),
-                    }
+                    # Yield a Request - Scrapy will download the PDF respecting rate limits
+                    yield scrapy.Request(
+                        url=full_url,
+                        callback=self.parse_document,
+                        meta={
+                            "source_type": "civic_meeting",
+                            "committee_name": committee_name,
+                            "meeting_date": meeting_date,
+                            "title": meeting_title,
+                            "asset_type": asset_type,
+                            "scraped_at": datetime.now().isoformat(),
+                        },
+                        # Don't filter duplicates - same URL might be linked multiple times
+                        dont_filter=False,
+                    )
+
+    def parse_document(self, response):
+        """Handle downloaded document (PDF/HTML).
+
+        Scrapy has already downloaded this respecting rate limits.
+        We save to temp file and yield item for pipeline processing.
+
+        If CivicPlus returns a viewer HTML page instead of PDF, we detect
+        it and follow the real download link (still rate-limited via Scrapy).
+        """
+        url = response.url
+        meta = response.meta
+        source_type = meta.get("source_type", "civic_meeting")
+
+        # Detect content type from response
+        content_type = response.headers.get(b"Content-Type", b"").decode().lower()
+
+        # Check if we got HTML when expecting PDF (viewer wrapper detection)
+        if "text/html" in content_type and not meta.get("expected_html"):
+            # CivicPlus sometimes returns a viewer page - find the real download link
+            download_url = None
+
+            # Try common CivicPlus download patterns
+            download_url = response.css("#download-link::attr(href)").get()
+            if not download_url:
+                download_url = response.css('a[href*="write=true"]::attr(href)').get()
+            if not download_url:
+                download_url = response.xpath(
+                    '//a[contains(translate(text(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", '
+                    '"abcdefghijklmnopqrstuvwxyz"), "download")]/@href'
+                ).get()
+
+            if download_url:
+                # Follow the real download link (still rate-limited!)
+                full_url = urljoin(url, download_url)
+                self.logger.info(f"Detected viewer wrapper, following real link: {full_url}")
+                yield scrapy.Request(
+                    url=full_url,
+                    callback=self.parse_document,
+                    meta=meta,
+                    dont_filter=True,  # Allow re-visiting with different URL
+                )
+                return
+            else:
+                # No download link found - it's actual HTML content
+                self.logger.info(f"HTML content (not a viewer wrapper): {url}")
+
+        # Generate deterministic path
+        entity_id = generate_entity_id(url, source_type)
+
+        if "text/html" in content_type:
+            ext = ".html"
+        elif "application/pdf" in content_type:
+            ext = ".pdf"
+        else:
+            # Default to PDF for civic documents
+            ext = ".pdf"
+
+        # Save to temp file
+        temp_path = Path(f"temp_downloads/{entity_id}{ext}")
+        temp_path.parent.mkdir(exist_ok=True)
+
+        with open(temp_path, "wb") as f:
+            f.write(response.body)
+
+        self.logger.info(f"Downloaded {len(response.body)} bytes to {temp_path}")
+
+        # Yield item with temp_path for pipeline
+        yield {
+            "source_type": source_type,
+            "committee_name": meta.get("committee_name"),
+            "meeting_date": meta.get("meeting_date"),
+            "title": meta.get("title"),
+            "asset_type": meta.get("asset_type"),
+            "url": url,
+            "scraped_at": meta.get("scraped_at"),
+            "temp_path": str(temp_path),  # Pipeline uses this instead of downloading
+            "content_type": "pdf" if ext == ".pdf" else "html",
+        }

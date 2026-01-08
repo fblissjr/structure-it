@@ -40,40 +40,49 @@ class StructureItPipeline:
         self.session = DEFAULT_SAFE_SESSION
 
     async def process_item(self, item, spider):
-        """Process a single item asynchronously."""
+        """Process a single item asynchronously.
+
+        Expects item to have 'temp_path' from spider (already downloaded via Scrapy).
+        This ensures all downloads respect Scrapy's rate limiting.
+        """
         url = item["url"]
         source_type = item.get("source_type", "civic_meeting")
         entity_id = generate_entity_id(url, source_type)
 
         spider.logger.info(f"Processing item: {item.get('title', 'Untitled')} ({url})")
 
-        # Determine extension and expected type
-        ext = ".pdf"
-        expected_html = False
-        if item.get("content_type") == "html" or item.get("content_type") == "html_snippet" or url.endswith(".aspx") or url.endswith(".html"):
-            ext = ".html"
-            expected_html = True
-        
-        # Download to temp (Ingestion Phase)
-        temp_path = Path(f"temp_downloads/{entity_id}{ext}")
-        temp_path.parent.mkdir(exist_ok=True)
-
         try:
-            # 1. Download / Prepare Content
+            # 1. Get content from pre-downloaded file or raw_text
             content = ""
+
             if item.get("content_type") == "html_snippet" and item.get("raw_text"):
-                # Special case: We already scraped the text
+                # Special case: We already scraped the text inline
                 content = item["raw_text"]
-                # No need to download or convert
+            elif item.get("temp_path"):
+                # Normal case: Spider already downloaded via Scrapy (rate-limited)
+                temp_path = Path(item["temp_path"])
+                if not temp_path.exists():
+                    spider.logger.error(f"temp_path does not exist: {temp_path}")
+                    return item
+
+                # Convert to markdown (CPU Bound - Run in Thread)
+                spider.logger.info(f"Converting {temp_path} to MD...")
+                result = await asyncio.to_thread(self.md.convert, str(temp_path))
+                content = result.text_content
             else:
-                # Run in thread if needed, but requests is blocking.
+                # Fallback: Download directly (only for legacy/other spiders)
+                # This path should rarely be hit with the updated spider
+                spider.logger.warning(f"No temp_path - falling back to direct download for {url}")
+                ext = ".pdf"
+                if item.get("content_type") == "html" or url.endswith(".aspx") or url.endswith(".html"):
+                    ext = ".html"
+                temp_path = Path(f"temp_downloads/{entity_id}{ext}")
+                temp_path.parent.mkdir(exist_ok=True)
+
                 if not temp_path.exists():
                     spider.logger.info(f"Downloading {url}...")
-                    # Pass expected_html flag to handle viewer unwrapping
-                    await asyncio.to_thread(self._download_file, url, temp_path, expected_html)
+                    await asyncio.to_thread(self._download_file, url, temp_path, ext == ".html")
 
-                # 2. Convert (CPU Bound - Run in Thread)
-                spider.logger.info("Converting to MD...")
                 result = await asyncio.to_thread(self.md.convert, str(temp_path))
                 content = result.text_content
 
