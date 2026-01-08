@@ -15,6 +15,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.generators import PolicyGenerator
 
 
@@ -63,8 +64,8 @@ async def generate_micro_dataset() -> None:
     output_dir = Path("data/sample_policies/micro_dataset")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Initialize generator with lite model for speed and cost
-    generator = PolicyGenerator(model_name="gemini-flash-lite-latest", temperature=1.2)
+    # Initialize generator (uses DEFAULT_MODEL from config)
+    generator = PolicyGenerator(model_name=DEFAULT_MODEL, temperature=1.2)
 
     # Generate each policy
     metadata_list = []

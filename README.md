@@ -54,8 +54,8 @@ All settings are centralized in environment variables:
 export GOOGLE_API_KEY="your-api-key-here"
 # Get your key from: https://aistudio.google.com/app/apikey
 
-# Optional: Model configuration (default: gemini-2.5-flash)
-export STRUCTURE_IT_MODEL="gemini-2.5-flash"
+# Optional: Model configuration (default: gemini-3-flash-preview)
+export STRUCTURE_IT_MODEL="gemini-3-flash-preview"
 
 # Optional: Generation temperature (default: 0.8)
 export STRUCTURE_IT_TEMPERATURE="0.8"
@@ -139,45 +139,16 @@ See [docs/policy_requirements_guide.md](docs/policy_requirements_guide.md) for p
 
 ## Features
 
-### Core Components
+### Project Structure
 
-**Extractors** - Extract structured data from unstructured content
-- `GeminiExtractor`: General-purpose extraction with any Pydantic schema
-- `PolicyRequirementsExtractor`: Example domain-specific extractor
-- Easy to create custom extractors for any domain
+The codebase is organized around domains and examples:
 
-**Generators** - Create synthetic content for testing
-- `BaseGenerator`: Reusable LLM-powered content generation
-- `PolicyGenerator`: Policy documents (5 domains: Financial, IT, HR, Legal, Compliance)
-- `ArxivGenerator`: AI/ML research papers (6 focus areas)
-- `CivicDocumentGenerator`: Local government documents (agendas, minutes, proposals)
-- Extensible pattern - easy to add more domains
+- **`src/structure_it/`** - Core library (extractors, generators, schemas, storage, scrapers)
+- **`examples/`** - Runnable examples for each domain
+- **`server/`** - FastAPI backend for the UI
+- **`ui/`** - React-based Structure Studio interface
 
-**Schemas** - 6 domain-specific Pydantic models
-- Academic Papers, Web Articles, Code Documentation
-- Meeting Notes, Media Transcripts, Policy Requirements
-- BaseSchema with validation and serialization
-- Easy to add new domains
-
-**Local Govt Citizen Data** - Robust data collection
-- **Transparent and Respectful**: Built-in `AutoThrottle`, `SafeSession` for downloads, and User-Agent identification
-- **CDC**: Change Data Capture pipeline to only process new/changed documents (saves LLM costs, is respectful to the upstream systems)
-
-**Storage** - Flexible persistence backends
-- JSON Storage: Simple file-based (great for prototyping)
-- DuckDB Storage: Analytical queries with JSON columns
-- Star Schema Storage: Dimensional Context Model for granular LLM retrieval
-- SHA256-based IDs: Deterministic, idempotent
-
-**Config** - Centralized configuration (`config.py`)
-- Model defaults via `STRUCTURE_IT_MODEL` env var
-- Temperature, storage paths, all configurable
-- No hardcoded values scattered through code
-
-**Server** - FastAPI application (`server/main.py`)
-- Exposes the core extraction library via a REST API
-- Serves the React-based user interface
-- Provides a simple way to interact with the core library without writing Python code
+See `src/structure_it/` for implementation details and `examples/` for usage patterns.
 
 ### UI (Structure Studio)
 

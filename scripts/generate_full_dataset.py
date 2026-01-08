@@ -19,6 +19,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from structure_it.config import DEFAULT_MODEL
 from structure_it.generators import PolicyGenerator
 
 
@@ -159,8 +160,8 @@ async def generate_full_dataset(count: int | None = None) -> None:
     output_dir = Path("data/sample_policies/full_dataset")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Initialize generator with lite model for speed and cost
-    generator = FullDatasetGenerator(model_name="gemini-flash-lite-latest")
+    # Initialize generator (uses DEFAULT_MODEL from config)
+    generator = FullDatasetGenerator(model_name=DEFAULT_MODEL)
 
     # Generate policies
     metadata_list = []
@@ -200,7 +201,7 @@ async def generate_full_dataset(count: int | None = None) -> None:
                 "complexity": policy["complexity"],
                 "character_count": len(content),
                 "generated_at": datetime.utcnow().isoformat(),
-                "model": "gemini-flash-lite-latest",
+                "model": DEFAULT_MODEL,
                 "temperature": temp,
             }
             metadata_list.append(metadata)

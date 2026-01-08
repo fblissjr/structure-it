@@ -6,21 +6,16 @@ from urllib.parse import urljoin
 
 import scrapy
 
+from structure_it.config import get_scraper_settings
+
 
 class CivicPlusBidsSpider(scrapy.Spider):
     """Spider for scraping Bids/RFPs from CivicPlus Bids.aspx."""
 
     name = "civic_plus_bids"
 
-    custom_settings = {
-        "CONCURRENT_REQUESTS": 4,
-        "DOWNLOAD_DELAY": 2.0,
-        "RANDOMIZE_DOWNLOAD_DELAY": True,
-        "AUTOTHROTTLE_ENABLED": True,
-        "AUTOTHROTTLE_START_DELAY": 2.0,
-        "AUTOTHROTTLE_MAX_DELAY": 60.0,
-        "USER_AGENT": "CivicDataBot/1.0 (+https://github.com/fredbliss/structure-it)",
-    }
+    # Use moderate profile for secondary data sources
+    custom_settings = get_scraper_settings("moderate")
 
     def __init__(self, place_url=None, *args, **kwargs):
         super().__init__(*args, **kwargs)

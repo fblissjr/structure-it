@@ -10,28 +10,16 @@ from urllib.parse import urljoin
 
 import scrapy
 
+from structure_it.config import get_scraper_settings
+
 
 class CivicPlusSpider(scrapy.Spider):
     """Spider for CivicPlus AgendaCenter."""
 
     name = "civic_plus"
 
-    # Gold Standard Safety Settings
-    custom_settings = {
-        # Concurrency & Delay
-        "CONCURRENT_REQUESTS": 4,
-        "DOWNLOAD_DELAY": 2.0,
-        "RANDOMIZE_DOWNLOAD_DELAY": True,
-        # AutoThrottle (The "Good Citizen" feature)
-        "AUTOTHROTTLE_ENABLED": True,
-        "AUTOTHROTTLE_START_DELAY": 2.0,
-        "AUTOTHROTTLE_MAX_DELAY": 60.0,
-        "AUTOTHROTTLE_TARGET_CONCURRENCY": 1.0,
-        # Identification
-        "USER_AGENT": "CivicDataBot/1.0 (+https://github.com/fredbliss/structure-it)",
-        # Caching (Incremental logic is handled in pipeline, but HTTP cache helps dev)
-        "HTTPCACHE_ENABLED": False,  # Disable by default for prod to ensure freshness
-    }
+    # Use conservative profile for primary data sources (AgendaCenter)
+    custom_settings = get_scraper_settings("conservative")
 
     def __init__(self, place_url=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,18 +86,20 @@ class CivicPlusSpider(scrapy.Spider):
                     # Determine asset type (Agenda, Minutes, Packet, Audio, Video) from URL or text
                     # URL structure: /ViewFile/Item/123?fileID=456
                     # civic-scraper uses the 3rd path segment: /ViewFile/[Type]/...
-                    
+
                     asset_type = "Other"
                     lower_href = href.lower()
-                    
+
                     # Precise detection based on URL path segments if possible
-                    parts = href.split('/')
+                    parts = href.split("/")
                     if len(parts) > 3 and parts[1] == "ViewFile":
-                         # e.g., /AgendaCenter/ViewFile/Agenda/...
-                         candidate_type = parts[2] # Note: href might be relative so parts index varies
-                         # If absolute or relative root: /AgendaCenter/ViewFile/Agenda/
-                         # Let's rely on string matching which is safer for varied URLs
-                         pass
+                        # e.g., /AgendaCenter/ViewFile/Agenda/...
+                        candidate_type = parts[
+                            2
+                        ]  # Note: href might be relative so parts index varies
+                        # If absolute or relative root: /AgendaCenter/ViewFile/Agenda/
+                        # Let's rely on string matching which is safer for varied URLs
+                        pass
 
                     if "packet=true" in lower_href or "agenda_packet" in lower_href:
                         asset_type = "AgendaPacket"
@@ -118,12 +108,12 @@ class CivicPlusSpider(scrapy.Spider):
                     elif "/minutes/" in lower_href or "minutes" in lower_href:
                         asset_type = "Minutes"
                     elif "/audio/" in lower_href or "audio" in lower_href:
-                         asset_type = "Audio"
+                        asset_type = "Audio"
                     elif "/video/" in lower_href or "video" in lower_href:
-                         asset_type = "Video"
+                        asset_type = "Video"
                     elif "/captions/" in lower_href or "captions" in lower_href:
-                         asset_type = "Captions"
-                    
+                        asset_type = "Captions"
+
                     # Fallback: Override if text is explicit and type is still ambiguous
                     link_text = link.css("::text").get() or ""
                     if asset_type == "Other":
