@@ -52,6 +52,9 @@ SCRAPER_AUTOTHROTTLE_ENABLED = os.getenv("STRUCTURE_IT_AUTOTHROTTLE", "true").lo
 SCRAPER_AUTOTHROTTLE_START = float(os.getenv("STRUCTURE_IT_AUTOTHROTTLE_START", "2.0"))
 SCRAPER_AUTOTHROTTLE_MAX = float(os.getenv("STRUCTURE_IT_AUTOTHROTTLE_MAX", "60.0"))
 
+# Randomize delay (adds jitter: 0.5x to 1.5x configured delay)
+SCRAPER_RANDOMIZE_DELAY = os.getenv("STRUCTURE_IT_RANDOMIZE_DELAY", "true").lower() == "true"
+
 # Conservative profile (for primary data like AgendaCenter)
 SCRAPER_CONSERVATIVE_CONCURRENT = int(os.getenv("STRUCTURE_IT_SCRAPER_CONCURRENT_CONSERVATIVE", "1"))
 SCRAPER_CONSERVATIVE_DELAY = float(os.getenv("STRUCTURE_IT_SCRAPER_DELAY_CONSERVATIVE", "10.0"))
@@ -83,7 +86,7 @@ def get_scraper_settings(profile: str = "moderate") -> dict:
     return {
         "CONCURRENT_REQUESTS": concurrent,
         "DOWNLOAD_DELAY": delay,
-        "RANDOMIZE_DOWNLOAD_DELAY": True,
+        "RANDOMIZE_DOWNLOAD_DELAY": SCRAPER_RANDOMIZE_DELAY,
         "AUTOTHROTTLE_ENABLED": SCRAPER_AUTOTHROTTLE_ENABLED,
         "AUTOTHROTTLE_START_DELAY": SCRAPER_AUTOTHROTTLE_START,
         "AUTOTHROTTLE_MAX_DELAY": SCRAPER_AUTOTHROTTLE_MAX,
