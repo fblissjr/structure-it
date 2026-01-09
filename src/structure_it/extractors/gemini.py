@@ -11,6 +11,90 @@ from structure_it.config import DEFAULT_MODEL
 from structure_it.extractors.base import BaseExtractor, ExtractionError, TSchema
 
 
+def _resolve_refs(schema_dict: dict[str, Any], defs: dict[str, Any]) -> dict[str, Any]:
+    """Resolve $ref references by inlining definitions.
+
+    Args:
+        schema_dict: Schema dictionary that may contain $ref.
+        defs: The $defs dictionary with model definitions.
+
+    Returns:
+        Schema with all $ref resolved inline.
+    """
+    if not isinstance(schema_dict, dict):
+        return schema_dict
+
+    # If this is a $ref, resolve it
+    if "$ref" in schema_dict:
+        ref_path = schema_dict["$ref"]  # e.g., "#/$defs/Participant"
+        if ref_path.startswith("#/$defs/"):
+            def_name = ref_path.split("/")[-1]
+            if def_name in defs:
+                # Recursively resolve the definition (it may have nested refs)
+                return _resolve_refs(defs[def_name].copy(), defs)
+        # If we can't resolve, return as-is
+        return schema_dict
+
+    # Process all keys
+    resolved = {}
+    for key, value in schema_dict.items():
+        if isinstance(value, dict):
+            resolved[key] = _resolve_refs(value, defs)
+        elif isinstance(value, list):
+            resolved[key] = [
+                _resolve_refs(item, defs) if isinstance(item, dict) else item
+                for item in value
+            ]
+        else:
+            resolved[key] = value
+
+    return resolved
+
+
+def _clean_schema_for_gemini(schema_dict: dict[str, Any]) -> dict[str, Any]:
+    """Remove fields not supported by Gemini's schema format.
+
+    Gemini's API doesn't support certain JSON Schema fields like
+    'additionalProperties' that Pydantic generates. Also resolves
+    $ref references by inlining definitions.
+
+    Args:
+        schema_dict: JSON schema dictionary from Pydantic.
+
+    Returns:
+        Cleaned schema dictionary compatible with Gemini.
+    """
+    # First, resolve all $ref references
+    defs = schema_dict.get("$defs", {})
+    resolved = _resolve_refs(schema_dict, defs)
+
+    # Fields that Gemini doesn't support
+    unsupported_fields = {"additionalProperties", "additional_properties", "$defs"}
+
+    def _strip_unsupported(obj: Any) -> Any:
+        if not isinstance(obj, dict):
+            return obj
+
+        cleaned = {}
+        for key, value in obj.items():
+            if key in unsupported_fields:
+                continue
+
+            if isinstance(value, dict):
+                cleaned[key] = _strip_unsupported(value)
+            elif isinstance(value, list):
+                cleaned[key] = [
+                    _strip_unsupported(item) if isinstance(item, dict) else item
+                    for item in value
+                ]
+            else:
+                cleaned[key] = value
+
+        return cleaned
+
+    return _strip_unsupported(resolved)
+
+
 class GeminiExtractor(BaseExtractor[TSchema]):
     """Structured data extractor using Google Gemini API.
 
@@ -80,11 +164,15 @@ class GeminiExtractor(BaseExtractor[TSchema]):
                 parts = [instruction, content]
 
             # Configure generation with schema
+            # Clean the Pydantic schema for Gemini compatibility
+            raw_schema = self.schema.model_json_schema()
+            cleaned_schema = _clean_schema_for_gemini(raw_schema)
+
             config_params = {
                 **self.model_kwargs,
                 **kwargs,
                 "response_mime_type": "application/json",
-                "response_schema": self.schema,
+                "response_schema": cleaned_schema,
             }
 
             # Generate structured output

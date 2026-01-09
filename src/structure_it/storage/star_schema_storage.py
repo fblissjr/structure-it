@@ -168,8 +168,8 @@ class StarSchemaStorage(BaseStorage):
             # Log creation audit
             self.conn.execute(
                 """
-                INSERT INTO audit_document_changes (doc_id, change_type, new_content_hash, details)
-                VALUES (?, 'create', ?, 'Initial extraction')
+                INSERT INTO audit_document_changes (change_id, doc_id, change_type, new_content_hash, details)
+                VALUES (nextval('seq_audit_changes'), ?, 'create', ?, 'Initial extraction')
                 """,
                 [entity_id, content_hash]
             )
@@ -207,8 +207,8 @@ class StarSchemaStorage(BaseStorage):
             # Log update audit
             self.conn.execute(
                 """
-                INSERT INTO audit_document_changes (doc_id, change_type, old_content_hash, new_content_hash, details)
-                VALUES (?, 'update', ?, ?, ?)
+                INSERT INTO audit_document_changes (change_id, doc_id, change_type, old_content_hash, new_content_hash, details)
+                VALUES (nextval('seq_audit_changes'), ?, 'update', ?, ?, ?)
                 """,
                 [entity_id, old_hash, content_hash, f"Updated to version {current_version + 1}"]
             )
